@@ -12,8 +12,7 @@ datasource db {
 }
 
 model User {
-  id            Int       @id @default(autoincrement())
-  userId        String    @unique @default(cuid())
+  id            String    @id @default(cuid()) // NextAuth standard: String ID
   email         String    @unique
   emailVerified DateTime? // NextAuth required field
   name          String
@@ -51,7 +50,7 @@ model Account {
   id_token          String? @db.Text
   session_state     String?
 
-  user User @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -62,7 +61,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
 }
@@ -78,7 +77,7 @@ model VerificationToken {
 
 model Transaction {
   id            Int             @id @default(autoincrement())
-  user          User            @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
   date          DateTime
   type          TransactionType // income | expense
@@ -101,7 +100,7 @@ model Transaction {
 
 model FixedExpenseTemplate {
   id          Int      @id @default(autoincrement())
-  user        User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
   name        String
   amount      Decimal  @db.Decimal(15, 2)

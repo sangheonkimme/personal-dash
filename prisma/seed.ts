@@ -10,7 +10,7 @@ async function main() {
     where: { email: 'demo@example.com' },
     update: {},
     create: {
-      userId: 'demo-user-id',
+      id: 'demo-user-id', // cuid 대신 직접 지정
       email: 'demo@example.com',
       name: '데모 사용자',
       role: 'user',
@@ -27,7 +27,7 @@ async function main() {
     // 수입
     prisma.transaction.create({
       data: {
-        userId: user.userId,
+        userId: user.id,
         date: new Date('2025-10-25'),
         type: 'income',
         fixed: true,
@@ -40,7 +40,7 @@ async function main() {
     // 고정 지출
     prisma.transaction.create({
       data: {
-        userId: user.userId,
+        userId: user.id,
         date: new Date('2025-11-01'),
         type: 'expense',
         fixed: true,
@@ -54,7 +54,7 @@ async function main() {
     }),
     prisma.transaction.create({
       data: {
-        userId: user.userId,
+        userId: user.id,
         date: new Date('2025-11-05'),
         type: 'expense',
         fixed: true,
@@ -69,7 +69,7 @@ async function main() {
     // 변동 지출
     prisma.transaction.create({
       data: {
-        userId: user.userId,
+        userId: user.id,
         date: new Date('2025-11-06'),
         type: 'expense',
         fixed: false,
@@ -82,7 +82,7 @@ async function main() {
     }),
     prisma.transaction.create({
       data: {
-        userId: user.userId,
+        userId: user.id,
         date: new Date('2025-11-07'),
         type: 'expense',
         fixed: false,
@@ -95,7 +95,7 @@ async function main() {
     }),
     prisma.transaction.create({
       data: {
-        userId: user.userId,
+        userId: user.id,
         date: new Date('2025-11-08'),
         type: 'expense',
         fixed: false,
@@ -115,7 +115,7 @@ async function main() {
   const templates = await Promise.all([
     prisma.fixedExpenseTemplate.create({
       data: {
-        userId: user.userId,
+        userId: user.id,
         name: '월세',
         amount: 600000,
         category: '주거',
@@ -127,7 +127,7 @@ async function main() {
     }),
     prisma.fixedExpenseTemplate.create({
       data: {
-        userId: user.userId,
+        userId: user.id,
         name: '휴대폰 요금',
         amount: 55000,
         category: '통신',
@@ -139,7 +139,7 @@ async function main() {
     }),
     prisma.fixedExpenseTemplate.create({
       data: {
-        userId: user.userId,
+        userId: user.id,
         name: '넷플릭스',
         amount: 17000,
         category: '문화',
