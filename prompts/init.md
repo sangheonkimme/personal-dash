@@ -9,112 +9,115 @@
 
 ---
 
-## Phase 0.5: Docker 환경 구성
+## Phase 0.5: Docker 환경 구성 ✅
 
 ### 0.5-1. Dockerfile 작성 (프로덕션용)
-- [ ] Dockerfile 작성
-  - [ ] Multi-stage build 설정 (dependencies → builder → runner)
-  - [ ] Node.js 20 alpine 이미지 사용
-  - [ ] 프로덕션 의존성만 포함
-  - [ ] Prisma Client 생성 포함
-  - [ ] Next.js standalone 모드 사용
-  - [ ] 비root 사용자로 실행 (node:node)
-  - [ ] Health check 포함
-- [ ] .dockerignore 작성
-  - [ ] node_modules, .next, .git, .env 등 제외
-  - [ ] 빌드 아티팩트 제외
+- [x] Dockerfile 작성
+  - [x] Multi-stage build 설정 (dependencies → builder → runner)
+  - [x] Node.js 20 alpine 이미지 사용
+  - [x] 프로덕션 의존성만 포함
+  - [x] Prisma Client 생성 포함
+  - [x] Next.js standalone 모드 사용
+  - [x] 비root 사용자로 실행 (node:node)
+  - [x] Health check 포함
+- [x] .dockerignore 작성
+  - [x] node_modules, .next, .git, .env 등 제외
+  - [x] 빌드 아티팩트 제외
 
 ### 0.5-2. Docker Compose 설정 (로컬 개발 전용)
-- [ ] docker-compose.yml 작성 (로컬 개발용)
-  - [ ] PostgreSQL 서비스 정의
-  - [ ] Next.js 앱 서비스 정의
-  - [ ] 볼륨 마운트 설정 (핫 리로드)
-  - [ ] 네트워크 설정
-  - [ ] 환경변수 관리 (.env 연동)
-  - [ ] Prisma Studio 서비스 추가 (선택)
-- [ ] **주의**: Docker Compose는 로컬 개발 전용 (Render는 미지원)
+- [x] docker-compose.yml 작성 (로컬 개발용)
+  - [x] PostgreSQL 서비스 정의
+  - [x] Next.js 앱 서비스 정의
+  - [x] 볼륨 마운트 설정 (핫 리로드)
+  - [x] 네트워크 설정
+  - [x] 환경변수 관리 (.env 연동)
+  - [x] Prisma Studio 서비스 추가 (선택)
+- [x] **주의**: Docker Compose는 로컬 개발 전용 (Render는 미지원)
 
 ### 0.5-3. Render 배포 설정 파일 작성
-- [ ] render.yaml 작성
-  - [ ] PostgreSQL 데이터베이스 정의
-  - [ ] Web Service 정의 (Dockerfile 빌드)
-  - [ ] 환경변수 설정 (envVars)
-  - [ ] Health check 엔드포인트 설정
-  - [ ] Auto-deploy 설정 (main 브랜치)
-  - [ ] 리전 설정 (Singapore)
-- [ ] .env.production.example 작성
-  - [ ] Render 환경변수 템플릿
+- [x] render.yaml 작성
+  - [x] PostgreSQL 데이터베이스 정의
+  - [x] Web Service 정의 (Dockerfile 빌드)
+  - [x] 환경변수 설정 (envVars)
+  - [x] Health check 엔드포인트 설정
+  - [x] Auto-deploy 설정 (main 브랜치)
+  - [x] 리전 설정 (Singapore)
+- [x] .env.production.example 작성
+  - [x] Render 환경변수 템플릿
 
 ### 0.5-4. Docker 헬퍼 스크립트
-- [ ] package.json에 Docker 스크립트 추가
-  - [ ] `docker:build` - 프로덕션 이미지 빌드
-  - [ ] `docker:dev` - Docker Compose로 개발 환경 시작
-  - [ ] `docker:down` - Docker Compose 중지
-  - [ ] `docker:logs` - 컨테이너 로그 확인
-  - [ ] `docker:test` - 빌드된 이미지 로컬 테스트
-- [ ] README에 Docker 실행 가이드 추가
+- [x] package.json에 Docker 스크립트 추가
+  - [x] `docker:build` - 프로덕션 이미지 빌드
+  - [x] `docker:dev` - Docker Compose로 개발 환경 시작
+  - [x] `docker:down` - Docker Compose 중지
+  - [x] `docker:logs` - 컨테이너 로그 확인
+  - [x] `docker:test` - 빌드된 이미지 로컬 테스트
+- [x] README에 Docker 실행 가이드 추가
 
 ---
 
-## Phase 1: 인프라 & 인증 기반 구축
+## Phase 1: 인프라 & 인증 기반 구축 ✅
 
 ### 1-1. 데이터베이스 & Prisma 설정
-- [ ] Docker Compose로 PostgreSQL 로컬 환경 구성
-- [ ] Render PostgreSQL 프로덕션 DB 생성 및 연결 테스트
-- [ ] Prisma 마이그레이션 실행 (`prisma migrate dev`)
-- [ ] Prisma Client 생성 (`prisma generate`)
-- [ ] 시드 데이터 스크립트 작성 (`prisma/seed.ts`)
-  - [ ] 샘플 사용자 생성
-  - [ ] 한국 맞춤 카테고리 데이터 (식비, 교통, 주거, 통신 등)
-  - [ ] 샘플 거래 내역 (고정/변동, 수입/지출)
+- [x] Docker Compose로 PostgreSQL 로컬 환경 구성
+- [ ] Render PostgreSQL 프로덕션 DB 생성 및 연결 테스트 (배포 시)
+- [x] Prisma 마이그레이션 실행 (`prisma migrate dev`)
+- [x] Prisma Client 생성 (`prisma generate`)
+- [x] 시드 데이터 스크립트 작성 (`prisma/seed.ts`)
+  - [x] 샘플 사용자 생성
+  - [x] 한국 맞춤 카테고리 데이터 (식비, 교통, 주거, 통신 등)
+  - [x] 샘플 거래 내역 (고정/변동, 수입/지출)
 
 ### 1-2. NextAuth 구글 로그인 구현
-- [ ] NextAuth 설정 파일 생성 (`lib/auth.ts` or `auth.config.ts`)
-- [ ] Google OAuth Provider 설정
-- [ ] Prisma Adapter 연결
-- [ ] JWT 세션 전략 구성
-- [ ] 환경변수 설정 (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXTAUTH_SECRET)
-- [ ] 로그인/로그아웃 API 라우트 구현 (`app/api/auth/[...nextauth]/route.ts`)
+- [x] NextAuth 설정 파일 생성 (`lib/auth.ts` or `auth.config.ts`)
+- [x] Google OAuth Provider 설정
+- [x] Prisma Adapter 연결
+- [x] JWT 세션 전략 구성
+- [x] 환경변수 설정 (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXTAUTH_SECRET)
+- [x] 로그인/로그아웃 API 라우트 구현 (`app/api/auth/[...nextauth]/route.ts`)
 
 ### 1-3. 미들웨어 & 인증 보호
-- [ ] NextAuth 미들웨어 설정 (`middleware.ts`)
-- [ ] 보호된 라우트 정의 (대시보드, 설정 등)
-- [ ] 세션 헬퍼 유틸리티 작성 (`lib/auth-utils.ts`)
+- [x] NextAuth 미들웨어 설정 (`middleware.ts`)
+- [x] 보호된 라우트 정의 (대시보드, 설정 등)
+- [x] 세션 헬퍼 유틸리티 작성 (`lib/auth-utils.ts`)
 
 ---
 
-## Phase 2: 코어 유틸리티 & 타입 정의
+## Phase 2: 코어 유틸리티 & 타입 정의 ✅
 
 ### 2-1. 타입 시스템 구축
-- [ ] Prisma 타입 기반 공통 타입 정의 (`types/index.ts`)
-  - [ ] `BaseRow` 인터페이스 (ag-Grid용)
-  - [ ] `Row<TExtra>` 제네릭 타입
-  - [ ] API Request/Response DTO 타입
-  - [ ] `TransactionType`, `PaymentMethod` 등 Enum 타입
+- [x] Prisma 타입 기반 공통 타입 정의 (`types/index.ts`)
+  - [x] `BaseRow` 인터페이스 (ag-Grid용)
+  - [x] `Row<TExtra>` 제네릭 타입
+  - [x] API Request/Response DTO 타입
+  - [x] `TransactionType`, `PaymentMethod` 등 Enum 타입
 
 ### 2-2. Zod 스키마 정의
-- [ ] Transaction 생성/수정 스키마 (`lib/validations/transaction.ts`)
-- [ ] User 설정 스키마 (`lib/validations/user.ts`)
-- [ ] Quick Add Bar 입력 파싱 스키마
-- [ ] API 공통 응답 스키마
+- [x] Transaction 생성/수정 스키마 (`lib/validations/transaction.ts`)
+- [x] User 설정 스키마 (`lib/validations/user.ts`)
+- [x] Quick Add Bar 입력 파싱 스키마 (`lib/validations/quick-input.ts`)
+- [x] API 공통 응답 스키마 (`lib/validations/api.ts`)
 
 ### 2-3. 급여월(Period) 계산 유틸리티
-- [ ] `getPayPeriod()` 함수 구현 (`lib/utils/pay-period.ts`)
-  - [ ] salaryDay 기반 시작/종료일 계산
-  - [ ] 29/30/31일 예외 처리 (2월, 30일 달 등)
-  - [ ] Asia/Seoul 타임존 적용
-  - [ ] 월별 라벨 생성 (예: "2025년 10월")
-- [ ] 유닛 테스트 작성 (`__tests__/pay-period.test.ts`)
+- [x] `getPayPeriod()` 함수 구현 (`lib/utils/pay-period.ts`)
+  - [x] salaryDay 기반 시작/종료일 계산
+  - [x] 29/30/31일 예외 처리 (2월, 30일 달 등)
+  - [x] Asia/Seoul 타임존 적용
+  - [x] 월별 라벨 생성 (예: "2025년 10월")
+  - [x] `getPayPeriodRange()` 함수 (±N개월 범위 생성)
+  - [x] `isSamePayPeriod()` 함수 (급여월 비교)
+- [ ] 유닛 테스트 작성 (`__tests__/pay-period.test.ts`) - Phase 10에서 진행
   - [ ] 일반 케이스 (1~28일)
   - [ ] 경계 케이스 (29, 30, 31일)
   - [ ] 2월 처리 (윤년/평년)
   - [ ] 월 경계 넘어가는 케이스
 
 ### 2-4. 날짜/통화 포맷팅 유틸리티
-- [ ] dayjs 타임존 플러그인 설정
-- [ ] 날짜 포맷팅 함수 (`formatDate`, `parseDate`)
-- [ ] 통화 포맷팅 함수 (`formatCurrency`)
-- [ ] 로케일 기반 숫자 파싱 함수
+- [x] dayjs 타임존 플러그인 설정 (`lib/utils/format.ts`)
+- [x] 날짜 포맷팅 함수 (`formatDate`, `parseDate`, `formatRelativeTime`)
+- [x] 통화 포맷팅 함수 (`formatCurrency`, `parseCurrency`)
+- [x] 로케일 기반 숫자 파싱 함수 (`formatNumber`, `parseNumber`)
+- [x] 퍼센트 포맷팅 함수 (`formatPercent`)
 
 ---
 
