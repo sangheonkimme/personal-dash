@@ -19,12 +19,18 @@
     "docker:test": "docker run -p 3000:3000 --env-file .env personal-dash:latest"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.10.0",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^6.16.3",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-slot": "^1.2.3",
     "@tanstack/react-query": "^5.90.2",
     "ag-grid-community": "^34.2.0",
     "ag-grid-react": "^34.2.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "dayjs": "^1.11.18",
+    "lucide-react": "^0.544.0",
     "next": "^15.5.4",
     "next-auth": "^5.0.0-beta.29",
     "next-intl": "^4.3.9",
@@ -32,6 +38,7 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-hook-form": "^7.64.0",
+    "tailwind-merge": "^3.3.1",
     "zod": "^4.1.11",
     "zustand": "^5.0.8"
   },
