@@ -12,15 +12,17 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  userId    String   @unique @default(cuid())
-  email     String   @unique
-  name      String
-  phone     String?
-  role      String   @default("user")
-  password  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            Int       @id @default(autoincrement())
+  userId        String    @unique @default(cuid())
+  email         String    @unique
+  emailVerified DateTime? // NextAuth required field
+  name          String
+  image         String?   // NextAuth profile image
+  phone         String?
+  role          String    @default("user")
+  password      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Budget settings
   salaryDay Int?     @default(25) // 1~31
