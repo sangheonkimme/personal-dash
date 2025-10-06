@@ -9,10 +9,58 @@
 
 ---
 
+## Phase 0.5: Docker 환경 구성
+
+### 0.5-1. Dockerfile 작성 (프로덕션용)
+- [ ] Dockerfile 작성
+  - [ ] Multi-stage build 설정 (dependencies → builder → runner)
+  - [ ] Node.js 20 alpine 이미지 사용
+  - [ ] 프로덕션 의존성만 포함
+  - [ ] Prisma Client 생성 포함
+  - [ ] Next.js standalone 모드 사용
+  - [ ] 비root 사용자로 실행 (node:node)
+  - [ ] Health check 포함
+- [ ] .dockerignore 작성
+  - [ ] node_modules, .next, .git, .env 등 제외
+  - [ ] 빌드 아티팩트 제외
+
+### 0.5-2. Docker Compose 설정 (로컬 개발 전용)
+- [ ] docker-compose.yml 작성 (로컬 개발용)
+  - [ ] PostgreSQL 서비스 정의
+  - [ ] Next.js 앱 서비스 정의
+  - [ ] 볼륨 마운트 설정 (핫 리로드)
+  - [ ] 네트워크 설정
+  - [ ] 환경변수 관리 (.env 연동)
+  - [ ] Prisma Studio 서비스 추가 (선택)
+- [ ] **주의**: Docker Compose는 로컬 개발 전용 (Render는 미지원)
+
+### 0.5-3. Render 배포 설정 파일 작성
+- [ ] render.yaml 작성
+  - [ ] PostgreSQL 데이터베이스 정의
+  - [ ] Web Service 정의 (Dockerfile 빌드)
+  - [ ] 환경변수 설정 (envVars)
+  - [ ] Health check 엔드포인트 설정
+  - [ ] Auto-deploy 설정 (main 브랜치)
+  - [ ] 리전 설정 (Singapore)
+- [ ] .env.production.example 작성
+  - [ ] Render 환경변수 템플릿
+
+### 0.5-4. Docker 헬퍼 스크립트
+- [ ] package.json에 Docker 스크립트 추가
+  - [ ] `docker:build` - 프로덕션 이미지 빌드
+  - [ ] `docker:dev` - Docker Compose로 개발 환경 시작
+  - [ ] `docker:down` - Docker Compose 중지
+  - [ ] `docker:logs` - 컨테이너 로그 확인
+  - [ ] `docker:test` - 빌드된 이미지 로컬 테스트
+- [ ] README에 Docker 실행 가이드 추가
+
+---
+
 ## Phase 1: 인프라 & 인증 기반 구축
 
 ### 1-1. 데이터베이스 & Prisma 설정
-- [ ] PostgreSQL 로컬 인스턴스 설정 또는 클라우드 DB 연결
+- [ ] Docker Compose로 PostgreSQL 로컬 환경 구성
+- [ ] Render PostgreSQL 프로덕션 DB 생성 및 연결 테스트
 - [ ] Prisma 마이그레이션 실행 (`prisma migrate dev`)
 - [ ] Prisma Client 생성 (`prisma generate`)
 - [ ] 시드 데이터 스크립트 작성 (`prisma/seed.ts`)
@@ -360,24 +408,101 @@
 - [ ] ESLint --max-warnings=0 통과
 - [ ] 프로덕션 환경 .env 설정
 
-### 12-2. 데이터베이스 배포
-- [ ] Vercel Postgres / Render / Railway 선택
+### 12-2. 데이터베이스 배포 (Render PostgreSQL)
+- [ ] Render PostgreSQL 인스턴스 생성
+  - [ ] 리전 선택 (Singapore 또는 Oregon 권장)
+  - [ ] 플랜 선택 (Free tier 또는 Starter)
+  - [ ] 데이터베이스 이름 및 사용자 설정
 - [ ] 프로덕션 DB 마이그레이션 실행
-- [ ] Connection Pooling 설정 (Prisma Accelerate 검토)
+  - [ ] External Connection String 확보
+  - [ ] `DATABASE_URL` 환경변수 설정
+  - [ ] `npx prisma migrate deploy` 실행
+- [ ] Connection Pooling 설정
+  - [ ] Prisma Connection Pooling (선택)
+  - [ ] PgBouncer 검토 (고부하 시)
 - [ ] 백업 전략 수립
+  - [ ] Render 자동 백업 확인
+  - [ ] 수동 백업 스크립트 작성
 
-### 12-3. 웹 애플리케이션 배포
-- [ ] Vercel 프로젝트 생성
-- [ ] 환경변수 설정 (Vercel Dashboard)
-- [ ] 도메인 연결 (선택)
-- [ ] HTTPS/SSL 설정
-- [ ] 배포 성공 확인
+### 12-3. Render Blueprint 배포 (render.yaml 기반 - 권장)
 
-### 12-4. 모니터링 & 분석
-- [ ] Vercel Analytics 연동
+#### 12-3-1. render.yaml 최종 검증
+- [ ] render.yaml 파일 검토
+  - [ ] services 섹션 확인 (web service)
+  - [ ] databases 섹션 확인 (PostgreSQL)
+  - [ ] 환경변수 참조 확인
+  - [ ] build 명령어 확인 (`docker build`)
+  - [ ] start 명령어 확인
+- [ ] Health check 엔드포인트 구현
+  - [ ] `app/api/health/route.ts` 생성
+  - [ ] DB 연결 체크 포함
+
+#### 12-3-2. Render에 배포
+- [ ] Render Dashboard에서 "New Blueprint Instance" 선택
+- [ ] GitHub 레포지토리 연결
+- [ ] render.yaml 감지 확인
+- [ ] 환경변수 시크릿 설정
+  - [ ] `NEXTAUTH_SECRET` (생성: `openssl rand -base64 32`)
+  - [ ] `GOOGLE_CLIENT_ID`
+  - [ ] `GOOGLE_CLIENT_SECRET`
+- [ ] 배포 실행 (자동으로 DB 생성 → 앱 빌드 → 배포)
+- [ ] 빌드 로그 모니터링
+  - [ ] Dockerfile 빌드 성공 확인
+  - [ ] Prisma 마이그레이션 실행 확인
+  - [ ] 앱 시작 확인
+
+#### 12-3-3. Google OAuth 콜백 URL 업데이트
+- [ ] Render에서 발급된 URL 확인 (예: `https://personal-dash.onrender.com`)
+- [ ] Google Cloud Console에서 콜백 URL 추가
+  - [ ] `https://<your-render-url>/api/auth/callback/google`
+- [ ] `NEXTAUTH_URL` 환경변수 업데이트 (Render Dashboard)
+
+### 12-4. 대안: Manual Docker 배포 (render.yaml 미사용)
+
+#### Option A: Dockerfile 기반 Render 수동 배포
+- [ ] Render Dashboard에서 "New Web Service" 선택
+- [ ] GitHub 레포지토리 연결
+- [ ] 배포 설정
+  - [ ] Environment: Docker
+  - [ ] Dockerfile Path: `./Dockerfile`
+  - [ ] Docker Build Context: `.`
+  - [ ] Docker Command: (비워두거나 `CMD` from Dockerfile)
+  - [ ] Region: Singapore
+  - [ ] Instance Type: Starter 이상
+- [ ] 환경변수 수동 설정 (위와 동일)
+- [ ] PostgreSQL 데이터베이스 별도 생성 및 연결
+
+#### Option B: Vercel (표준 Next.js 빌드 - Docker 미사용)
+- [ ] Vercel로 배포 (Docker 없이 표준 Next.js)
+  - [ ] GitHub 레포지토리 연결
+  - [ ] 환경변수 설정 (Vercel Dashboard)
+  - [ ] 빌드 명령어: `pnpm build`
+  - [ ] 출력 디렉토리: `.next`
+- [ ] Render PostgreSQL을 Vercel 앱에 연결
+  - [ ] External Connection String 사용
+  - [ ] `DATABASE_URL` 환경변수 설정
+- [ ] **장점**: 빠른 배포, CDN, 서버리스
+- [ ] **단점**: Docker 환경과 차이, 컨테이너 제어 제한
+
+### 12-5. 배포 후 검증
+- [ ] Health Check 엔드포인트 응답 확인
+- [ ] Google OAuth 콜백 URL 테스트
+- [ ] 데이터베이스 연결 확인
+- [ ] 프로덕션 환경에서 주요 기능 동작 테스트
+  - [ ] 로그인/로그아웃
+  - [ ] 거래 생성/조회/수정/삭제
+  - [ ] 다국어 전환
+
+### 12-6. 모니터링 & 분석
+- [ ] Render 로그 모니터링 설정
+  - [ ] 실시간 로그 스트림 확인
+  - [ ] 로그 보관 정책 설정
 - [ ] Web Vitals 수집 확인
+  - [ ] Vercel Analytics (Option A) 또는
+  - [ ] Google Analytics 4 (Option B)
 - [ ] 커스텀 이벤트 트래킹 (거래 생성 등)
-- [ ] 에러 모니터링 (Sentry 검토)
+- [ ] 에러 모니터링 (Sentry 연동 검토)
+- [ ] Uptime 모니터링 (UptimeRobot, Pingdom 등)
 
 ---
 
@@ -387,12 +512,49 @@
 - [ ] 프로젝트 소개
 - [ ] 기술 스택 명시
 - [ ] 로컬 실행 가이드
-  - [ ] 의존성 설치 (`pnpm install`)
-  - [ ] 환경변수 설정 (`.env` 복사)
-  - [ ] DB 마이그레이션 (`pnpm db:migrate`)
-  - [ ] 시드 데이터 (`pnpm db:seed`)
-  - [ ] 개발 서버 실행 (`pnpm dev`)
-- [ ] 배포 가이드
+  - [ ] 방법 1: Docker Compose (권장 - 로컬 개발)
+    - [ ] 사전 요구사항: Docker Desktop 설치
+    - [ ] 실행 명령어:
+      ```bash
+      # 개발 환경 시작
+      docker-compose up -d
+
+      # 마이그레이션 실행
+      docker-compose exec app pnpm db:migrate
+
+      # 시드 데이터 입력
+      docker-compose exec app pnpm db:seed
+
+      # http://localhost:3000 접속
+      ```
+    - [ ] 로그 확인: `docker-compose logs -f app`
+    - [ ] 중지: `docker-compose down`
+  - [ ] 방법 2: 로컬 Node.js 환경
+    - [ ] 사전 요구사항: Node.js 20+, pnpm, PostgreSQL
+    - [ ] 실행 명령어:
+      ```bash
+      pnpm install
+      cp .env.example .env  # 환경변수 편집 필요
+      pnpm db:migrate
+      pnpm db:seed
+      pnpm dev
+      ```
+- [ ] Docker 프로덕션 빌드 테스트
+  ```bash
+  # 프로덕션 이미지 빌드
+  docker build -t personal-dash:latest .
+
+  # 로컬 테스트 실행
+  docker run -p 3000:3000 --env-file .env personal-dash:latest
+  ```
+- [ ] 배포 가이드 (Render Blueprint)
+  - [ ] render.yaml 기반 자동 배포
+    1. Render Dashboard → "New Blueprint Instance"
+    2. GitHub 레포지토리 연결
+    3. 환경변수 시크릿 설정 (NEXTAUTH_SECRET 등)
+    4. 자동 배포 실행 (DB + App)
+  - [ ] Google OAuth 설정 업데이트
+  - [ ] 배포 URL 확인 및 테스트
 - [ ] 주요 기능 스크린샷
 
 ### 13-2. API 문서
@@ -427,7 +589,14 @@
 - [ ] 모바일 반응형 (≥360px)
 - [ ] a11y: ARIA 레이블, 스크린 리더 호환
 
-### 14-3. 보안 체크
+### 14-3. Docker 환경 체크
+- [ ] Docker 이미지 빌드 성공 (크기 확인)
+- [ ] Docker Compose로 로컬 환경 실행 성공
+- [ ] 컨테이너 내에서 DB 마이그레이션 정상 동작
+- [ ] 핫 리로드 동작 확인 (개발 환경)
+- [ ] 멀티스테이지 빌드 최적화 검증
+
+### 14-4. 보안 체크
 - [ ] CSRF/XSS 방지 확인
 - [ ] Rate limiting 동작
 - [ ] HttpOnly 쿠키 설정
@@ -451,27 +620,45 @@
 
 ## 완료 기준 체크리스트 (모든 Phase 완료 후)
 
-- [ ] 로컬에서 Google OAuth → 온보딩 → 입력바 → 표 → 카드 → 월칩 전체 플로우 성공
-- [ ] 급여월 경계 테스트 (31일/2월) 통과
-- [ ] ag-Grid 인라인 편집 서버 반영 및 CSV 내보내기 확인
-- [ ] i18n ko/en 토글 및 포맷 정상
-- [ ] `eslint --max-warnings=0` 통과
-- [ ] `tsc --noEmit` 통과 (타입 체크)
-- [ ] 프로덕션 배포 성공 (Vercel)
-- [ ] README 및 문서 완성
+- [ ] **로컬 환경**: Docker Compose로 전체 스택 실행 성공
+- [ ] **기능 플로우**: Google OAuth → 온보딩 → 입력바 → 표 → 카드 → 월칩 전체 플로우 성공
+- [ ] **엣지 케이스**: 급여월 경계 테스트 (31일/2월) 통과
+- [ ] **그리드 기능**: ag-Grid 인라인 편집 서버 반영 및 CSV 내보내기 확인
+- [ ] **다국어**: i18n ko/en 토글 및 포맷 정상
+- [ ] **코드 품질**: `eslint --max-warnings=0` 통과
+- [ ] **타입 체크**: `tsc --noEmit` 통과
+- [ ] **Docker**: 프로덕션 이미지 빌드 및 실행 성공
+- [ ] **배포**: Render (또는 Vercel) 배포 성공
+- [ ] **문서**: README 및 Docker 사용 가이드 완성
 
 ---
 
 **총 예상 작업 기간**: 2-3주 (1인 풀타임 기준)
 
 **우선순위**:
-1. Phase 1-4 (인프라 & API) — 필수
-2. Phase 5-8 (파싱 & UI 핵심) — 필수
-3. Phase 9-10 (페이지 & 테스트) — 필수
-4. Phase 11-13 (보안 & 배포 & 문서) — 권장
-5. Phase 14-15 (검증 & 확장 준비) — 선택적
+1. **Phase 0.5** (Docker 환경) — 권장 (개발 환경 통일)
+2. **Phase 1-4** (인프라 & API) — 필수
+3. **Phase 5-8** (파싱 & UI 핵심) — 필수
+4. **Phase 9-10** (페이지 & 테스트) — 필수
+5. **Phase 11-13** (보안 & 배포 & 문서) — 권장
+6. **Phase 14-15** (검증 & 확장 준비) — 선택적
 
 **마일스톤**:
-- M1 (1주): Phase 1-4 완료 → API 동작 확인
-- M2 (2주): Phase 5-9 완료 → UI 통합 완료
-- M3 (3주): Phase 10-14 완료 → 배포 & 검증 완료
+- **M0** (2일): Phase 0.5 완료 → Docker 환경 구성
+- **M1** (1주): Phase 1-4 완료 → API 동작 확인
+- **M2** (2주): Phase 5-9 완료 → UI 통합 완료
+- **M3** (3주): Phase 10-14 완료 → 배포 & 검증 완료
+
+**배포 전략**:
+- **Database**: Render PostgreSQL (Free tier → Starter)
+- **Application**:
+  - **1순위**: Render Blueprint (render.yaml) + Dockerfile
+    - 장점: 인프라 코드화, DB + App 한 번에 배포, Docker 네이티브
+  - **2순위**: Render Manual Docker 배포 (Dockerfile 직접 빌드)
+    - 장점: 세밀한 제어, Blueprint 없이 배포 가능
+  - **3순위**: Vercel (표준 Next.js 빌드 - Docker 미사용)
+    - 장점: 빠른 배포, CDN, 서버리스
+    - 단점: Docker 환경과 차이, 컨테이너 제어 제한
+- **로컬 개발**: Docker Compose (PostgreSQL + Next.js)
+- **프로덕션**: Dockerfile (단일 이미지, render.yaml로 배포)
+- **Monitoring**: Render Logs + Google Analytics 4 + Sentry (선택)
