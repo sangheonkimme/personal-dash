@@ -225,27 +225,46 @@
 
 ---
 
-## Phase 6: React Query & 상태 관리
+## Phase 6: React Query & 상태 관리 ✅
 
 ### 6-1. React Query 설정
-- [ ] QueryClient 설정 (`lib/query-client.ts`)
-- [ ] 전역 Provider 설정 (`app/providers.tsx`)
-- [ ] 기본 쿼리 옵션 (staleTime, cacheTime, retry)
+- [x] QueryClient 설정 (`lib/query-client.ts`)
+  - [x] 기본 쿼리 옵션 (staleTime, gcTime, retry)
+  - [x] Exponential backoff 재시도 로직
+  - [x] makeQueryClient 팩토리 함수
+- [x] 전역 Provider 설정 (`app/providers.tsx`)
+  - [x] QueryClientProvider 래퍼
+  - [x] SessionProvider 통합
+  - [x] React Query Devtools 추가 (개발 환경)
 
 ### 6-2. 커스텀 훅 작성
-- [ ] `useTransactions` - 거래 내역 조회
-- [ ] `useCreateTransaction` - 거래 생성 (옵티미스틱)
-- [ ] `useUpdateTransaction` - 거래 수정 (옵티미스틱)
-- [ ] `useDeleteTransaction` - 거래 삭제
-- [ ] `useSummary` - 요약 통계 조회
-- [ ] `usePayPeriod` - 급여월 조회
-- [ ] 옵티미스틱 업데이트 & 롤백 로직
+- [x] `useTransactions` - 거래 내역 조회 (`hooks/use-transactions.ts`)
+- [x] `useCreateTransaction` - 거래 생성 (옵티미스틱)
+- [x] `useUpdateTransaction` - 거래 수정 (옵티미스틱)
+- [x] `useDeleteTransaction` - 거래 삭제 (옵티미스틱)
+- [x] `useSummary` - 요약 통계 조회 (`hooks/use-stats.ts`)
+- [x] `usePayPeriod` - 급여월 조회 (`hooks/use-pay-period.ts`)
+- [x] `useUserSettings` / `useUpdateUserSettings` - 사용자 설정 (`hooks/use-user-settings.ts`)
+- [x] 옵티미스틱 업데이트 & 롤백 로직 완료
+- [x] Query 무효화 전략 구현
 
 ### 6-3. Zustand 스토어 (경량 UI 상태)
-- [ ] 현재 선택된 급여월 상태
-- [ ] Quick Add Bar 입력 상태
-- [ ] 필터/정렬 UI 상태
-- [ ] 언어 토글 상태
+- [x] 현재 선택된 급여월 상태 (`store/use-period-store.ts`)
+  - [x] 이전/다음 급여월 이동
+  - [x] 오늘로 리셋
+  - [x] localStorage 영속화
+- [x] Quick Add Bar 입력 상태 (`store/use-quick-add-store.ts`)
+  - [x] 원본 입력 문자열
+  - [x] 타입/고정 토글 (fallback)
+  - [x] 입력 초기화
+- [x] 필터/정렬 UI 상태 (`store/use-filter-store.ts`)
+  - [x] 타입/고정/카테고리 필터
+  - [x] 검색어 상태
+  - [x] 정렬 기준/방향
+  - [x] localStorage 영속화
+- [x] 언어 토글 상태 (`store/use-locale-store.ts`)
+  - [x] 로케일 변경/토글
+  - [x] localStorage 영속화
 
 ---
 
