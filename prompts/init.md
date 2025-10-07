@@ -375,28 +375,36 @@
 
 ---
 
-## Phase 9: 페이지 구성
+## Phase 9: 페이지 구성 ✅
 
 ### 9-1. 인증 페이지
-- [ ] 로그인 페이지 (`app/[locale]/login/page.tsx`)
-  - [ ] Google 로그인 버튼
-  - [ ] 로딩 상태 처리
-  - [ ] 로그인 후 리다이렉트
+- [x] 로그인 페이지 (`app/[locale]/login/page.tsx`)
+  - [x] Google 로그인 버튼
+  - [x] 로딩 상태 처리
+  - [x] 로그인 후 리다이렉트
+  - [x] 다국어 지원 (Phase 7에서 구현 완료)
 
 ### 9-2. 대시보드 메인 페이지
-- [ ] 대시보드 페이지 (`app/[locale]/dashboard/page.tsx`)
-  - [ ] Quick Add Bar 배치
-  - [ ] Progress 카드 그리드
-  - [ ] PeriodChips 배치
-  - [ ] TransactionGrid 배치
-  - [ ] 로딩/에러 상태 처리
+- [x] 대시보드 페이지 (`app/[locale]/dashboard/page.tsx`)
+  - [x] Quick Add Bar 배치
+  - [x] Progress 카드 그리드 (ProgressCardGrid)
+  - [x] PeriodChips 배치
+  - [x] TransactionGrid 배치
+  - [x] 로딩/에러 상태 처리 (DashboardSkeleton)
+  - [x] 온보딩 다이얼로그 통합
+  - [x] 환영 메시지 카드
+  - [x] 급여월 정보 표시
+  - [x] React Query 훅 연동 (useUserSettings, usePayPeriod, useTransactions, useSummary)
 
-### 9-3. 설정 페이지 (옵션)
-- [ ] 설정 페이지 (`app/[locale]/settings/page.tsx`)
-  - [ ] 월급일 변경
-  - [ ] 통화 변경
-  - [ ] 언어 변경
-  - [ ] 계정 정보 표시
+### 9-3. 설정 페이지
+- [x] 설정 페이지 (`app/[locale]/settings/page.tsx`)
+  - [x] 월급일 변경
+  - [x] 통화 변경 (KRW/USD/EUR/JPY)
+  - [x] 언어 변경 (ko/en, 변경 시 리다이렉트)
+  - [x] 계정 정보 표시 (이름, 이메일, ID)
+  - [x] 변경사항 감지 (hasChanges)
+  - [x] 저장 버튼 (useUpdateUserSettings)
+  - [x] toast 알림
 
 ---
 
