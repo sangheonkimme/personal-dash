@@ -268,35 +268,50 @@
 
 ---
 
-## Phase 7: UI 컴포넌트 — 공통
+## Phase 7: UI 컴포넌트 — 공통 ✅
 
 ### 7-1. shadcn/ui 설치 & 커스터마이징
-- [ ] shadcn/ui 초기화
-- [ ] 필요한 컴포넌트 설치
-  - [ ] Button
-  - [ ] Card
-  - [ ] Input
-  - [ ] Select
-  - [ ] Dialog
-  - [ ] Toast
-  - [ ] Badge/Chip
-- [ ] 테마 설정 (light/dark mode 준비)
+- [x] shadcn/ui 초기화
+- [x] 필요한 컴포넌트 설치
+  - [x] Button
+  - [x] Card
+  - [x] Input
+  - [x] Select
+  - [x] Dialog
+  - [x] Sonner (Toast 대체)
+  - [x] Badge
+  - [x] Skeleton
+  - [x] Dropdown Menu
+  - [x] Separator
+- [x] 테마 설정 (new-york style, neutral baseColor)
 
 ### 7-2. 레이아웃 컴포넌트
-- [ ] RootLayout (`app/layout.tsx`)
-  - [ ] next-intl Provider
-  - [ ] React Query Provider
-  - [ ] NextAuth SessionProvider
-- [ ] DashboardLayout (`app/[locale]/dashboard/layout.tsx`)
-  - [ ] 헤더 (로그아웃, 언어 토글)
-  - [ ] 사이드바 (향후 확장용)
-  - [ ] 모바일 반응형
+- [x] RootLayout (`app/layout.tsx`)
+  - [x] Providers (React Query + NextAuth)
+  - [x] Sonner Toaster
+  - [x] 한글 메타데이터
+- [x] LocaleLayout (`app/[locale]/layout.tsx`)
+  - [x] NextIntlClientProvider
+  - [x] 로케일 검증
+- [x] DashboardLayout (`app/[locale]/dashboard/layout.tsx`)
+  - [x] 세션 인증 확인
+  - [x] DashboardHeader 포함
+- [x] DashboardHeader (`components/DashboardHeader.tsx`)
+  - [x] 로그아웃 드롭다운
+  - [x] 언어 토글 버튼
+  - [x] 모바일 반응형
 
 ### 7-3. 에러 & 로딩 상태
-- [ ] Loading Skeleton 컴포넌트
-- [ ] Error Boundary 컴포넌트
-- [ ] 404 페이지
-- [ ] 500 에러 페이지
+- [x] Loading Skeleton 컴포넌트 (`components/LoadingSkeleton.tsx`)
+  - [x] DashboardSkeleton
+  - [x] TableSkeleton
+  - [x] CardSkeleton
+- [x] Error Boundary 컴포넌트 (`components/ErrorBoundary.tsx`)
+  - [x] ErrorBoundary 클래스
+  - [x] ErrorFallback 함수형 컴포넌트
+- [x] 404 페이지 (`app/not-found.tsx`)
+- [x] Error 페이지 (`app/[locale]/error.tsx`, `app/[locale]/dashboard/error.tsx`)
+- [x] Loading 페이지 (`app/[locale]/dashboard/loading.tsx`)
 
 ---
 
