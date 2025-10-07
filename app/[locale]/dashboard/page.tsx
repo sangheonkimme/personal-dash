@@ -100,7 +100,7 @@ export default function DashboardPage() {
         />
 
         {/* Period Chips */}
-        <div className="flex justify-center">
+        <div className="flex justify-center overflow-hidden max-w-[600px]">
           <PeriodChips salaryDay={salaryDay} maxMonths={24} />
         </div>
 
@@ -112,7 +112,8 @@ export default function DashboardPage() {
                 {isKorean ? '현재 급여월' : 'Current Pay Period'}
               </CardTitle>
               <CardDescription>
-                {payPeriod.label}: {payPeriod.startISO.split('T')[0]} ~ {payPeriod.endISO.split('T')[0]}
+                {payPeriod.label}: {payPeriod.startISO?.split('T')[0]} ~{' '}
+                {payPeriod.endISO?.split('T')[0]}
               </CardDescription>
             </CardHeader>
           </Card>

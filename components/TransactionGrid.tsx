@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import type { ColDef, GridReadyEvent, CellEditingStoppedEvent } from 'ag-grid-community';
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { BaseRow } from '@/types';
@@ -11,6 +12,9 @@ import { Button } from '@/components/ui/button';
 import { Download, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import dayjs from 'dayjs';
+
+// ag-Grid 모듈 등록
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 export interface TransactionGridProps {
   rows: BaseRow[];
