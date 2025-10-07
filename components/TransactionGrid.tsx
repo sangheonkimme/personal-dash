@@ -12,7 +12,7 @@ import { Download, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import dayjs from 'dayjs';
 
-export interface TransactionGridProps<TExtra extends object = {}> {
+export interface TransactionGridProps {
   rows: BaseRow[];
   currency: string;
   locale: 'ko' | 'en';
@@ -20,18 +20,38 @@ export interface TransactionGridProps<TExtra extends object = {}> {
   onRefresh?: () => void;
 }
 
-export function TransactionGrid<TExtra extends object = {}>({
+export function TransactionGrid({
   rows,
   currency,
   locale,
   isLoading,
   onRefresh,
-}: TransactionGridProps<TExtra>) {
+}: TransactionGridProps) {
   const gridRef = useRef<AgGridReact>(null);
   const updateTransaction = useUpdateTransaction();
   const deleteTransaction = useDeleteTransaction();
 
   const isKorean = locale === 'ko';
+
+  // 삭제 핸들러
+  const handleDelete = useCallback(
+    (id: number) => {
+      if (!confirm(isKorean ? '정말 삭제하시겠습니까?' : 'Are you sure you want to delete this transaction?')) {
+        return;
+      }
+
+      deleteTransaction.mutate(id, {
+        onSuccess: () => {
+          toast.success(isKorean ? '삭제되었습니다' : 'Deleted successfully');
+          onRefresh?.();
+        },
+        onError: () => {
+          toast.error(isKorean ? '삭제 실패' : 'Delete failed');
+        },
+      });
+    },
+    [deleteTransaction, isKorean, onRefresh]
+  );
 
   // 컬럼 정의
   const columnDefs = useMemo<ColDef<BaseRow>[]>(
@@ -61,7 +81,7 @@ export function TransactionGrid<TExtra extends object = {}>({
           } else if (params.value === 'expense') {
             return { color: 'red', fontWeight: 'bold' };
           }
-          return {};
+          return undefined;
         },
         valueFormatter: (params) => {
           if (params.value === 'income') return isKorean ? '수입' : 'Income';
@@ -132,6 +152,7 @@ export function TransactionGrid<TExtra extends object = {}>({
         sortable: false,
         filter: false,
         width: 80,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         cellRenderer: (params: any) => {
           return (
             <Button
@@ -146,7 +167,7 @@ export function TransactionGrid<TExtra extends object = {}>({
         },
       },
     ],
-    [currency, isKorean]
+    [currency, isKorean, handleDelete]
   );
 
   // 셀 편집 완료 핸들러
@@ -160,7 +181,9 @@ export function TransactionGrid<TExtra extends object = {}>({
       updateTransaction.mutate(
         {
           id: data.id,
-          [field]: newValue,
+          data: {
+            [field]: newValue,
+          },
         },
         {
           onError: () => {
@@ -172,25 +195,6 @@ export function TransactionGrid<TExtra extends object = {}>({
       );
     },
     [updateTransaction, isKorean, onRefresh]
-  );
-
-  // 삭제 핸들러
-  const handleDelete = useCallback(
-    (id: number) => {
-      if (!confirm(isKorean ? '정말 삭제하시겠습니까?' : 'Are you sure you want to delete this transaction?')) {
-        return;
-      }
-
-      deleteTransaction.mutate(id, {
-        onSuccess: () => {
-          toast.success(isKorean ? '삭제되었습니다' : 'Deleted successfully');
-        },
-        onError: () => {
-          toast.error(isKorean ? '삭제 실패' : 'Delete failed');
-        },
-      });
-    },
-    [deleteTransaction, isKorean]
   );
 
   // CSV 내보내기

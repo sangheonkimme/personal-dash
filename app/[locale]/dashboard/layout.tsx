@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { auth } from '@/auth';
 import { DashboardHeader } from '@/components/DashboardHeader';
 
 export default async function DashboardLayout({
@@ -10,7 +9,7 @@ export default async function DashboardLayout({
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
-  const session = await getServerSession(authOptions);
+  const session = await auth();
   const { locale } = await params;
 
   if (!session) {

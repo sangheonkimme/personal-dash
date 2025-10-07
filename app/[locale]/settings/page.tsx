@@ -19,7 +19,7 @@ export default function SettingsPage() {
   const router = useRouter();
   const isKorean = locale === 'ko';
 
-  const { data: userSettings, isLoading } = useUserSettings();
+  const { data: userSettings } = useUserSettings();
   const updateSettings = useUpdateUserSettings();
 
   const [salaryDay, setSalaryDay] = useState<number>(25);

@@ -40,6 +40,7 @@ export function errorResponse(
 /**
  * Zod 검증 에러 응답 생성
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function zodErrorResponse(error: ZodError<any>): NextResponse<ApiErrorResponse> {
   const fieldErrors: Record<string, string[]> = {};
 

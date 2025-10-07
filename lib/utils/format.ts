@@ -56,7 +56,6 @@ export function formatRelativeTime(
   locale: string = 'ko-KR',
   tz: string = 'Asia/Seoul'
 ): string {
-  const dayjsLocale = locale.startsWith('ko') ? 'ko' : 'en';
   const target = dayjs(date).tz(tz);
   const now = dayjs().tz(tz);
   const diffInDays = now.diff(target, 'day');

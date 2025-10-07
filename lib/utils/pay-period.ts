@@ -138,7 +138,6 @@ export function getPayPeriodRange(
   tz: string = 'Asia/Seoul'
 ): PayPeriod[] {
   const periods: PayPeriod[] = [];
-  const anchor = dayjs(anchorDate).tz(tz);
 
   // 현재 급여월 계산
   const currentPeriod = getPayPeriod(anchorDate, salaryDay, tz);

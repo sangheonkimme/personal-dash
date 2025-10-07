@@ -9,7 +9,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface PeriodChipsProps {
-  salaryDay: number;
+  salaryDay?: number;
   maxMonths?: number;
 }
 

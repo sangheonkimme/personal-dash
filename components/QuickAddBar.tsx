@@ -9,7 +9,6 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Plus } from 'lucide-react';
 
@@ -42,7 +41,7 @@ export function QuickAddBar() {
       if (!parsed.amount || parsed.amount <= 0) {
         setValidationError(isKorean ? '금액을 입력해주세요' : 'Please enter an amount');
       }
-    } catch (error) {
+    } catch (_error) {
       setParsedPreview(null);
       setValidationError(isKorean ? '입력 형식이 올바르지 않습니다' : 'Invalid input format');
     }
@@ -56,10 +55,10 @@ export function QuickAddBar() {
 
     try {
       await createTransaction.mutateAsync({
-        date: parsedPreview.date,
+        date: parsedPreview.date || new Date().toISOString(),
         amount: parsedPreview.amount!,
-        type: parsedPreview.type,
-        fixed: parsedPreview.fixed,
+        type: parsedPreview.type || fallbackType,
+        fixed: parsedPreview.fixed ?? fallbackFixed,
         category: parsedPreview.category || (isKorean ? '미분류' : 'Uncategorized'),
         subcategory: parsedPreview.subcategory,
         description: parsedPreview.description,

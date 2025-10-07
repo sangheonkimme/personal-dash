@@ -28,23 +28,20 @@ export default function DashboardPage() {
   const { data: userSettings, isLoading: settingsLoading } = useUserSettings();
 
   // 급여월 계산
-  const { data: payPeriod, isLoading: periodLoading } = usePayPeriod({
+  const { data: payPeriod } = usePayPeriod({
     anchorDate,
-    enabled: !!userSettings?.salaryDay,
   });
 
   // 거래 내역 조회
   const { data: transactionsData, isLoading: transactionsLoading } = useTransactions({
-    startDate: payPeriod?.startISO,
-    endDate: payPeriod?.endISO,
-    enabled: !!payPeriod,
+    startDate: payPeriod?.startISO || '',
+    endDate: payPeriod?.endISO || '',
   });
 
   // 통계 조회
   const { data: summary, isLoading: summaryLoading } = useSummary({
-    startDate: payPeriod?.startISO,
-    endDate: payPeriod?.endISO,
-    enabled: !!payPeriod,
+    startDate: payPeriod?.startISO || '',
+    endDate: payPeriod?.endISO || '',
   });
 
   // 첫 로그인 감지 (salaryDay가 null이면 온보딩 필요)

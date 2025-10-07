@@ -3,7 +3,6 @@ import { prisma } from '@/lib/prisma';
 import { requireUserId } from '@/lib/auth-utils';
 import {
   successResponse,
-  errorResponse,
   zodErrorResponse,
   unauthorizedResponse,
   serverErrorResponse,
@@ -44,6 +43,7 @@ export async function GET(request: NextRequest) {
     } = validatedQuery;
 
     // WHERE 조건 구성
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = { userId };
 
     if (startDate && endDate) {
