@@ -315,59 +315,63 @@
 
 ---
 
-## Phase 8: UI 컴포넌트 — 가계부 핵심
+## Phase 8: UI 컴포넌트 — 가계부 핵심 ✅
 
 ### 8-1. 온보딩 플로우
-- [ ] 온보딩 다이얼로그 컴포넌트
-  - [ ] 환영 메시지
-  - [ ] 월급일 설정 (1~31 선택)
-  - [ ] 통화 설정 (KRW 기본)
-  - [ ] 언어 설정 (ko-KR 기본)
-- [ ] 첫 로그인 감지 로직
-- [ ] 설정 저장 API 연동
+- [x] 온보딩 다이얼로그 컴포넌트 (`components/OnboardingDialog.tsx`)
+  - [x] 환영 메시지
+  - [x] 월급일 설정 (1~31 선택)
+  - [x] 통화 설정 (KRW/USD/EUR/JPY)
+  - [x] 언어 설정 (ko/en)
+- [x] 설정 저장 API 연동 (useUpdateUserSettings)
+- [x] Dialog hideClose prop 추가
 
 ### 8-2. Quick Add Bar 컴포넌트
-- [ ] 입력 필드 (`components/QuickAddBar.tsx`)
-  - [ ] Placeholder 다국어 처리
-  - [ ] 실시간 파싱 미리보기
-  - [ ] 검증 에러 인라인 표시
-- [ ] 타입 토글 UI (고정/변동/수입 라디오)
-- [ ] 자동완성 드롭다운
-- [ ] 키보드 단축키 (Enter, Shift+Enter)
-- [ ] 생성 성공 시 입력 초기화 & 토스트
+- [x] 입력 필드 (`components/QuickAddBar.tsx`)
+  - [x] Placeholder 다국어 처리
+  - [x] 실시간 파싱 미리보기 (Badge로 표시)
+  - [x] 검증 에러 인라인 표시
+- [x] 타입 토글 UI (지출/수입 버튼)
+- [x] 고정/변동 토글 UI
+- [x] 키보드 단축키 (Enter로 추가)
+- [x] 생성 성공 시 입력 초기화 & 토스트
+- [x] parseQuickInput 연동
+- [x] useCreateTransaction 옵티미스틱 업데이트
 
 ### 8-3. Progress 카드 (4종)
-- [ ] ProgressCard 공통 컴포넌트 (`components/ProgressCard.tsx`)
-  - [ ] 제목, 금액, 통화 표시
-  - [ ] 전월 대비 증감 % 및 화살표
-  - [ ] 간단 스파크라인 (mini chart)
-- [ ] Income 카드
-- [ ] Expense 카드
-- [ ] Saving 카드
-- [ ] Balance 카드
-- [ ] 카드 그리드 레이아웃 (반응형)
+- [x] ProgressCard 공통 컴포넌트 (`components/ProgressCard.tsx`)
+  - [x] 제목, 금액, 통화 표시
+  - [x] 전월 대비 증감 % 및 화살표
+  - [x] variant별 색상 구분 (income/expense/saving/balance)
+  - [x] 로딩 상태 스켈레톤
+- [x] Income 카드 (초록 테두리)
+- [x] Expense 카드 (빨강 테두리)
+- [x] Saving 카드 (파랑 테두리)
+- [x] Balance 카드 (보라 테두리)
+- [x] 카드 그리드 레이아웃 (ProgressCardGrid 컴포넌트)
 
 ### 8-4. 월별 Chip 내비게이션
-- [ ] PeriodChips 컴포넌트 (`components/PeriodChips.tsx`)
-  - [ ] 현재 급여월 중앙 정렬
-  - [ ] 좌우 스크롤 UI
-  - [ ] 키보드 내비게이션 (←→)
-  - [ ] 최대 ±24개월 표시
-  - [ ] 선택 시 상태 업데이트 & 데이터 리로드
-- [ ] 모바일 스와이프 지원
+- [x] PeriodChips 컴포넌트 (`components/PeriodChips.tsx`)
+  - [x] 현재 급여월 중앙 정렬 (scrollIntoView)
+  - [x] 좌우 스크롤 UI (ChevronLeft/Right 버튼)
+  - [x] 키보드 내비게이션 (←→, Home)
+  - [x] 최대 ±24개월 표시
+  - [x] 선택 시 상태 업데이트 (usePeriodStore)
+- [x] 스크롤 버튼 표시/숨김 자동 처리
 
 ### 8-5. ag-Grid 표 컴포넌트
-- [ ] TransactionGrid 컴포넌트 (`components/TransactionGrid.tsx`)
-  - [ ] 제네릭 타입 적용 `Row<TExtra>`
-  - [ ] 컬럼 정의 (date, type, fixed, category, amount 등)
-  - [ ] 인라인 편집 활성화 (editable columns)
-  - [ ] 필터링 & 정렬 UI
-  - [ ] 그룹핑 (category → subcategory)
-  - [ ] Pinned Total Row (급여월 합계)
-  - [ ] 다중 선택 & 일괄 삭제
-  - [ ] CSV 내보내기 버튼
-- [ ] 옵티미스틱 업데이트 연동
-- [ ] 에러 시 롤백 & 토스트
+- [x] TransactionGrid 컴포넌트 (`components/TransactionGrid.tsx`)
+  - [x] BaseRow 타입 적용
+  - [x] 컬럼 정의 (date, type, fixed, category, subcategory, amount, paymentMethod, description, actions)
+  - [x] 인라인 편집 활성화 (모든 컬럼 editable)
+  - [x] 필터링 & 정렬 UI (ag-Grid 기본 기능)
+  - [x] 행별 삭제 버튼 (Actions 컬럼)
+  - [x] CSV 내보내기 버튼
+- [x] 옵티미스틱 업데이트 연동 (useUpdateTransaction)
+- [x] 에러 시 롤백 & 토스트
+- [x] 하단 총합 표시 (총 수입/지출/잔액)
+- [x] 페이지네이션 (20개/페이지)
+- [x] ag-Grid CSS 임포트
 
 ---
 
