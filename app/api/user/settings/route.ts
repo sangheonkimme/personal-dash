@@ -14,7 +14,7 @@ import { ZodError } from 'zod';
  * GET /api/user/settings
  * 사용자 설정 조회
  */
-export async function GET(_request: NextRequest) {
+export async function GET() {
   try {
     const userId = await requireUserId();
 

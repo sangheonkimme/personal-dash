@@ -55,6 +55,8 @@ export default function DashboardPage() {
 
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
+    // 설정 완료 후 페이지 새로고침하여 데이터 다시 로드
+    window.location.reload();
   };
 
   // 로딩 상태
@@ -100,7 +102,7 @@ export default function DashboardPage() {
         />
 
         {/* Period Chips */}
-        <div className="flex justify-center overflow-hidden max-w-[600px]">
+        <div className="w-full">
           <PeriodChips salaryDay={salaryDay} maxMonths={24} />
         </div>
 

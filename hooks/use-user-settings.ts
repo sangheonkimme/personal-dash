@@ -5,11 +5,11 @@ import type { UpdateUserSettingsDTO } from '@/types';
  * User 타입 정의 (간소화된 버전)
  */
 interface UserSettings {
-  salaryDay: number;
-  currency: string;
-  locale: string;
-  name: string;
-  email: string;
+  salaryDay: number | null;
+  currency: string | null;
+  locale: string | null;
+  name: string | null;
+  email: string | null;
 }
 
 /**

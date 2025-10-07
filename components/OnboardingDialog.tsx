@@ -32,14 +32,23 @@ export function OnboardingDialog({ open, onComplete }: OnboardingDialogProps) {
 
   const handleComplete = async () => {
     try {
+      // 로케일을 BCP 47 형식으로 변환
+      const bcp47Locale = selectedLocale === 'ko' ? 'ko-KR' : 'en-US';
+
       await updateSettings.mutateAsync({
         salaryDay,
         currency,
-        locale: selectedLocale as 'ko' | 'en',
+        locale: bcp47Locale,
       });
 
       toast.success(isKorean ? '설정이 완료되었습니다!' : 'Settings saved successfully!');
-      onComplete();
+
+      // 로케일이 변경된 경우 페이지 리다이렉트
+      if (selectedLocale !== locale) {
+        window.location.href = `/${selectedLocale}/dashboard`;
+      } else {
+        onComplete();
+      }
     } catch (error) {
       toast.error(isKorean ? '설정 저장 실패' : 'Failed to save settings');
       console.error('Onboarding error:', error);
