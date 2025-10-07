@@ -1,0 +1,101 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "prev": "Previous",
+    "submit": "Submit"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "loginWithGoogle": "Sign in with Google",
+    "welcome": "Welcome",
+    "signInRequired": "Sign in required"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "summary": "Summary",
+    "recentTransactions": "Recent Transactions"
+  },
+  "transaction": {
+    "title": "Transactions",
+    "add": "Add Transaction",
+    "edit": "Edit Transaction",
+    "delete": "Delete Transaction",
+    "date": "Date",
+    "type": "Type",
+    "category": "Category",
+    "subcategory": "Subcategory",
+    "description": "Description",
+    "amount": "Amount",
+    "paymentMethod": "Payment Method",
+    "tags": "Tags",
+    "income": "Income",
+    "expense": "Expense",
+    "fixed": "Fixed",
+    "variable": "Variable"
+  },
+  "category": {
+    "salary": "Salary",
+    "bonus": "Bonus",
+    "investment": "Investment",
+    "housing": "Housing",
+    "rent": "Rent",
+    "utilities": "Utilities",
+    "food": "Food",
+    "transportation": "Transportation",
+    "communication": "Communication",
+    "mobile": "Mobile",
+    "internet": "Internet",
+    "culture": "Culture",
+    "movie": "Movie",
+    "ott": "OTT",
+    "health": "Health",
+    "education": "Education",
+    "shopping": "Shopping",
+    "etc": "Others"
+  },
+  "period": {
+    "current": "Current Period",
+    "previous": "Previous Period",
+    "next": "Next Period",
+    "custom": "Custom Period"
+  },
+  "stats": {
+    "income": "Total Income",
+    "expense": "Total Expense",
+    "saving": "Savings",
+    "balance": "Balance",
+    "fixedExpense": "Fixed Expense",
+    "variableExpense": "Variable Expense"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "preferences": "Preferences",
+    "salaryDay": "Salary Day",
+    "currency": "Currency",
+    "locale": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications"
+  },
+  "quickAdd": {
+    "placeholder": "e.g., 10/05 lunch $9 #variable #food card",
+    "help": "Enter date, amount, category, and hashtags"
+  }
+}

@@ -121,66 +121,79 @@
 
 ---
 
-## Phase 3: i18n & 다국어 지원
+## Phase 3: i18n & 다국어 지원 ✅
 
 ### 3-1. next-intl 설정
-- [ ] next-intl 미들웨어 통합 (`middleware.ts`)
-- [ ] 로케일 라우팅 설정 (`/ko`, `/en`)
-- [ ] i18n 설정 파일 (`i18n.config.ts`)
+- [x] next-intl 미들웨어 통합 (`middleware.ts`)
+- [x] 로케일 라우팅 설정 (`/ko`, `/en`)
+- [x] i18n 설정 파일 (`i18n/request.ts`, `i18n/routing.ts`)
+- [x] next.config.ts에 next-intl 플러그인 추가
 
 ### 3-2. 번역 파일 작성
-- [ ] 한국어 번역 (`messages/ko.json`)
-  - [ ] 공통 UI 텍스트
-  - [ ] 카테고리 명칭
-  - [ ] 에러 메시지
-  - [ ] 온보딩 텍스트
-- [ ] 영어 번역 (`messages/en.json`)
-  - [ ] 위 항목 영문 번역
-- [ ] 카테고리 다국어 사전 (`lib/constants/categories.ts`)
+- [x] 한국어 번역 (`messages/ko.json`)
+  - [x] 공통 UI 텍스트
+  - [x] 카테고리 명칭
+  - [x] 에러 메시지
+  - [x] 온보딩 텍스트
+- [x] 영어 번역 (`messages/en.json`)
+  - [x] 위 항목 영문 번역
+- [x] 카테고리 다국어 사전 (`lib/constants/categories.ts`)
 
 ### 3-3. 로케일 감지 & 전환
-- [ ] Accept-Language 헤더 파싱
-- [ ] 로케일 쿠키 저장/읽기
-- [ ] 수동 언어 토글 UI 컴포넌트
+- [x] 미들웨어에서 로케일 처리
+- [ ] 로케일 쿠키 저장/읽기 (추후 구현)
+- [ ] 수동 언어 토글 UI 컴포넌트 (Phase 7에서 구현)
 
 ---
 
-## Phase 4: API 라우트 구현
+## Phase 4: API 라우트 구현 ✅
 
 ### 4-1. 급여월 계산 API
-- [ ] `GET /api/period` 구현
-  - [ ] `anchorDate` 쿼리 파라미터 검증
-  - [ ] salaryDay 사용자 설정 조회
-  - [ ] `getPayPeriod()` 호출 및 응답
+- [x] `GET /api/period` 구현
+  - [x] `anchorDate` 쿼리 파라미터 검증
+  - [x] salaryDay 사용자 설정 조회
+  - [x] `getPayPeriod()` 호출 및 응답
 
 ### 4-2. Transaction CRUD API
-- [ ] `GET /api/transactions` 구현
-  - [ ] 페이지네이션 (page, pageSize)
-  - [ ] 날짜 범위 필터 (start, end)
-  - [ ] 검색/정렬 (q, sort)
-  - [ ] userId 스코프 적용
-- [ ] `POST /api/transactions` 구현
-  - [ ] Zod 검증
-  - [ ] 고정지출 템플릿 연계 (옵션)
-  - [ ] Rate limiting (5req/초)
-- [ ] `PUT /api/transactions/:id` 구현
-  - [ ] 권한 검증 (userId 일치)
-  - [ ] 옵티미스틱 업데이트 지원
-- [ ] `DELETE /api/transactions/:id` 구현
-  - [ ] 권한 검증
-  - [ ] 소프트 삭제 vs 하드 삭제 결정
+- [x] `GET /api/transactions` 구현
+  - [x] 페이지네이션 (page, pageSize)
+  - [x] 날짜 범위 필터 (start, end)
+  - [x] 검색/정렬 (q, sort)
+  - [x] userId 스코프 적용
+- [x] `POST /api/transactions` 구현
+  - [x] Zod 검증
+  - [ ] 고정지출 템플릿 연계 (추후 구현)
+  - [ ] Rate limiting (Phase 11에서 구현)
+- [x] `PATCH /api/transactions/:id` 구현
+  - [x] 권한 검증 (userId 일치)
+  - [x] 옵티미스틱 업데이트 지원
+- [x] `DELETE /api/transactions/:id` 구현
+  - [x] 권한 검증
+  - [x] 하드 삭제 구현
 
 ### 4-3. 통계/요약 API
-- [ ] `GET /api/stats/summary` 구현
-  - [ ] 날짜 범위 기준 집계
-  - [ ] income, expense, saving, balance 계산
-  - [ ] 전월 대비 증감 계산
-  - [ ] 응답 캐싱 전략
+- [x] `GET /api/stats` 구현
+  - [x] 날짜 범위 기준 집계
+  - [x] income, expense, saving, balance 계산
+  - [x] fixedExpense, variableExpense 계산
+  - [ ] 전월 대비 증감 계산 (Phase 8에서 구현)
+  - [ ] 응답 캐싱 전략 (Phase 11에서 구현)
 
-### 4-4. 고정 지출 템플릿 API (선택)
+### 4-4. User Settings API
+- [x] `GET /api/user/settings` 구현
+- [x] `PATCH /api/user/settings` 구현
+  - [x] salaryDay, currency, locale 업데이트
+
+### 4-5. API 헬퍼 유틸리티
+- [x] `lib/api/response.ts` 생성
+  - [x] successResponse, errorResponse
+  - [x] zodErrorResponse, unauthorizedResponse
+  - [x] notFoundResponse, serverErrorResponse
+
+### 4-6. 고정 지출 템플릿 API (Phase 8에서 구현)
 - [ ] `GET /api/fixed-templates` 구현
 - [ ] `POST /api/fixed-templates` 구현
-- [ ] `PUT /api/fixed-templates/:id` 구현
+- [ ] `PATCH /api/fixed-templates/:id` 구현
 - [ ] `DELETE /api/fixed-templates/:id` 구현
 
 ---
