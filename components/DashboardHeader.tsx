@@ -30,23 +30,24 @@ export function DashboardHeader() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="mr-4 flex">
-          <h1 className="text-lg font-semibold">Personal Dashboard</h1>
+      <div className="container flex h-14 items-center px-4 sm:px-6">
+        <div className="mr-2 sm:mr-4 flex">
+          <h1 className="text-base sm:text-lg font-semibold truncate">Personal Dashboard</h1>
         </div>
-        <div className="flex flex-1 items-center justify-end space-x-2">
+        <div className="flex flex-1 items-center justify-end space-x-1 sm:space-x-2">
           <Button
             variant="ghost"
             size="icon"
             onClick={handleLocaleToggle}
             title={currentLocale === 'ko' ? 'Switch to English' : '한국어로 전환'}
+            className="h-9 w-9 sm:h-10 sm:w-10"
           >
-            <Globe className="h-[1.2rem] w-[1.2rem]" />
+            <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <User className="h-[1.2rem] w-[1.2rem]" />
+              <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-10 sm:w-10">
+                <User className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

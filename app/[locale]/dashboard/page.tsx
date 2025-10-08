@@ -87,15 +87,15 @@ export default function DashboardPage() {
     <>
       <OnboardingDialog open={showOnboarding} onComplete={handleOnboardingComplete} />
 
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* 환영 메시지 */}
         {session?.user && (
           <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl">
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="text-lg sm:text-2xl">
                 {isKorean ? '환영합니다' : 'Welcome'}, {session.user.name}! 👋
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm sm:text-base">
                 {isKorean
                   ? '월급일 기준 가계부로 수입과 지출을 관리하세요.'
                   : 'Manage your income and expenses with salary-based budgeting.'}
@@ -125,11 +125,11 @@ export default function DashboardPage() {
         {/* Period Info */}
         {payPeriod && (
           <Card className="bg-muted/50">
-            <CardHeader>
-              <CardTitle className="text-lg">
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="text-base sm:text-lg">
                 {isKorean ? '현재 급여월' : 'Current Pay Period'}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-sm sm:text-base">
                 {payPeriod.label}: {payPeriod.startISO?.split('T')[0]} ~{' '}
                 {payPeriod.endISO?.split('T')[0]}
               </CardDescription>

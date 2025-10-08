@@ -82,16 +82,16 @@ export function PeriodChips({ salaryDay, maxMonths = 24 }: PeriodChipsProps) {
   }, []);
 
   return (
-    <div className="relative flex items-center gap-2">
+    <div className="relative flex items-center gap-1 sm:gap-2">
       {/* 이전 버튼 */}
       {showLeftArrow && (
         <Button
           variant="ghost"
           size="icon"
-          className="absolute left-0 z-10 bg-background/80 backdrop-blur-sm"
+          className="absolute left-0 z-10 bg-background/90 backdrop-blur-sm h-8 w-8 sm:h-10 sm:w-10 shadow-md"
           onClick={handleScrollLeft}
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
       )}
 
@@ -99,7 +99,7 @@ export function PeriodChips({ salaryDay, maxMonths = 24 }: PeriodChipsProps) {
       <div
         ref={scrollContainerRef}
         onScroll={checkScrollButtons}
-        className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth px-8"
+        className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide scroll-smooth px-8 sm:px-10 py-1"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {periods.map((period) => (
@@ -107,8 +107,8 @@ export function PeriodChips({ salaryDay, maxMonths = 24 }: PeriodChipsProps) {
             key={period.anchor}
             variant={period.isCurrent ? 'default' : 'outline'}
             className={cn(
-              'cursor-pointer whitespace-nowrap px-4 py-2 transition-all hover:scale-105',
-              period.isCurrent && 'ring-2 ring-ring ring-offset-2'
+              'cursor-pointer whitespace-nowrap px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm transition-all hover:scale-105 active:scale-95',
+              period.isCurrent && 'ring-1 sm:ring-2 ring-ring ring-offset-1 sm:ring-offset-2'
             )}
             data-current={period.isCurrent}
             onClick={() => handlePeriodClick(period.anchor)}
@@ -123,10 +123,10 @@ export function PeriodChips({ salaryDay, maxMonths = 24 }: PeriodChipsProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-0 z-10 bg-background/80 backdrop-blur-sm"
+          className="absolute right-0 z-10 bg-background/90 backdrop-blur-sm h-8 w-8 sm:h-10 sm:w-10 shadow-md"
           onClick={handleScrollRight}
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
         </Button>
       )}
     </div>

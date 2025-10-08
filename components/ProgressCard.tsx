@@ -77,13 +77,13 @@ export function ProgressCard({
   if (isLoading) {
     return (
       <Card className={cn('animate-pulse', getVariantStyles())}>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-4 sm:p-6">
           <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
           {icon}
         </CardHeader>
-        <CardContent>
-          <div className="h-8 w-32 bg-muted rounded mb-1"></div>
-          <div className="h-3 w-24 bg-muted rounded"></div>
+        <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+          <div className="h-6 sm:h-8 w-24 sm:w-32 bg-muted rounded mb-1"></div>
+          <div className="h-3 w-16 sm:w-24 bg-muted rounded"></div>
         </CardContent>
       </Card>
     );
@@ -91,17 +91,17 @@ export function ProgressCard({
 
   return (
     <Card className={getVariantStyles()}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-4 sm:p-6">
+        <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{title}</CardTitle>
         {icon}
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{formatCurrency(amount)}</div>
+      <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+        <div className="text-lg sm:text-2xl font-bold truncate">{formatCurrency(amount)}</div>
         {changePercent !== undefined && changePercent !== null && (
           <div className={cn('flex items-center gap-1 text-xs font-medium mt-1', getChangeColor())}>
             {getChangeIcon()}
             <span>{Math.abs(changePercent).toFixed(1)}%</span>
-            <span className="text-muted-foreground">vs last month</span>
+            <span className="hidden sm:inline text-muted-foreground">vs last month</span>
           </div>
         )}
       </CardContent>
@@ -125,7 +125,7 @@ export function ProgressCardGrid({
   isLoading?: boolean;
 }) {
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 sm:gap-4">
       <ProgressCard
         title="💰 Income"
         amount={income}

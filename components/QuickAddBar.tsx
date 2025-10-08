@@ -87,8 +87,8 @@ export function QuickAddBar() {
     : 'e.g., 10/05 lunch $15 #variable #food card';
 
   return (
-    <Card className="p-4">
-      <div className="space-y-4">
+    <Card className="p-3 sm:p-4">
+      <div className="space-y-3 sm:space-y-4">
         {/* 타입 & 고정 토글 */}
         <div className="flex flex-wrap gap-2">
           <div className="flex gap-1">
@@ -96,6 +96,7 @@ export function QuickAddBar() {
               variant={fallbackType === 'expense' ? 'default' : 'outline'}
               size="sm"
               onClick={() => toggleType('expense')}
+              className="text-xs sm:text-sm h-8 px-2 sm:h-9 sm:px-3"
             >
               {isKorean ? '지출' : 'Expense'}
             </Button>
@@ -103,6 +104,7 @@ export function QuickAddBar() {
               variant={fallbackType === 'income' ? 'default' : 'outline'}
               size="sm"
               onClick={() => toggleType('income')}
+              className="text-xs sm:text-sm h-8 px-2 sm:h-9 sm:px-3"
             >
               {isKorean ? '수입' : 'Income'}
             </Button>
@@ -112,6 +114,7 @@ export function QuickAddBar() {
               variant={fallbackFixed === true ? 'default' : 'outline'}
               size="sm"
               onClick={() => toggleFixed(true)}
+              className="text-xs sm:text-sm h-8 px-2 sm:h-9 sm:px-3"
             >
               {isKorean ? '고정' : 'Fixed'}
             </Button>
@@ -119,6 +122,7 @@ export function QuickAddBar() {
               variant={fallbackFixed === false ? 'default' : 'outline'}
               size="sm"
               onClick={() => toggleFixed(false)}
+              className="text-xs sm:text-sm h-8 px-2 sm:h-9 sm:px-3"
             >
               {isKorean ? '변동' : 'Variable'}
             </Button>
@@ -127,15 +131,19 @@ export function QuickAddBar() {
 
         {/* 입력 필드 */}
         <div className="space-y-2">
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Input
               value={rawInput}
               onChange={(e) => setRawInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={placeholder}
-              className={validationError ? 'border-destructive' : ''}
+              className={`text-sm sm:text-base ${validationError ? 'border-destructive' : ''}`}
             />
-            <Button onClick={handleSubmit} disabled={createTransaction.isPending || !!validationError}>
+            <Button
+              onClick={handleSubmit}
+              disabled={createTransaction.isPending || !!validationError}
+              className="w-full sm:w-auto shrink-0 h-9 sm:h-10"
+            >
               <Plus className="h-4 w-4 mr-1" />
               {isKorean ? '추가' : 'Add'}
             </Button>
