@@ -485,41 +485,44 @@
 
 ---
 
-## Phase 11: 보안 & 규정 준수
+## Phase 11: 보안 & 규정 준수 ✅
 
 ### 11-1. 보안 강화
 
-- [ ] CSRF 방지 (NextAuth 자동 처리 확인)
-- [ ] XSS 방지 (입력 sanitization)
-- [ ] SQL Injection 방지 (Prisma ORM 사용)
-- [ ] Rate Limiting 구현 (Vercel/Upstash)
-- [ ] HttpOnly 쿠키 설정 확인
-- [ ] HTTPS 강제 (프로덕션)
+- [x] CSRF 방지 (NextAuth 자동 처리 확인)
+- [x] XSS 방지 (입력 sanitization) - `lib/sanitize.ts` 구현
+- [x] SQL Injection 방지 (Prisma ORM 사용)
+- [x] Rate Limiting 구현 - `lib/rate-limit.ts` 구현
+  - [x] POST /api/transactions: 1분당 20 요청
+  - [x] PATCH/DELETE /api/transactions/[id]: 1분당 30 요청
+  - [x] PATCH /api/user/settings: 1분당 10 요청
+- [x] HttpOnly 쿠키 설정 확인 - `auth.ts`에서 설정
+- [ ] HTTPS 강제 (프로덕션) - Phase 12 배포 시 적용
 
 ### 11-2. 데이터 프라이버시
 
-- [ ] 개인정보 최소 수집 검증
-- [ ] 데이터 삭제 기능 (계정 탈퇴)
-- [ ] 데이터 내보내기 기능 (CSV)
-- [ ] 개인정보 처리방침 페이지
+- [x] 개인정보 최소 수집 검증 - OAuth만 사용 (이름, 이메일, 프로필 이미지)
+- [x] 데이터 삭제 기능 (계정 탈퇴) - `app/api/user/delete/route.ts` 구현
+- [x] 데이터 내보내기 기능 (CSV) - TransactionGrid에서 CSV 내보내기 지원
+- [ ] 개인정보 처리방침 페이지 - Phase 13 문서화에서 진행
 
 ### 11-3. 로깅 & 감사
 
-- [ ] 주요 이벤트 로깅 (생성/수정/삭제)
-- [ ] 감사 로그 테이블 (선택)
-- [ ] 에러 로깅 (Sentry 연동 검토)
+- [x] 주요 이벤트 로깅 (생성/수정/삭제) - `lib/audit-log.ts` 구현
+- [x] 감사 로그 테이블 - Prisma schema에 AuditLog 모델 추가
+- [ ] 에러 로깅 (Sentry 연동 검토) - Phase 12 배포 후 검토
 
 ---
 
 ## Phase 12: 배포 & DevOps
 
-### 12-1. 프로덕션 빌드 준비
+### 12-1. 프로덕션 빌드 준비 ✅
 
-- [ ] 환경변수 검증 스크립트
-- [ ] 빌드 에러 0건 확인
-- [ ] TypeScript strict mode 통과
-- [ ] ESLint --max-warnings=0 통과
-- [ ] 프로덕션 환경 .env 설정
+- [x] 환경변수 검증 스크립트 - `scripts/check-env.js` 구현
+- [x] 빌드 에러 0건 확인 - Next.js 빌드 성공
+- [x] TypeScript strict mode 통과 - `pnpm type-check` 통과
+- [x] ESLint --max-warnings=0 통과 - Prisma generated 파일 제외하면 통과
+- [x] 프로덕션 환경 .env 설정 - `.env.production.example` 작성
 
 ### 12-2. 데이터베이스 배포 (Render PostgreSQL)
 
