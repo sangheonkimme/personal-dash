@@ -14,6 +14,8 @@ import {
 import { ZodError } from 'zod';
 import type { PaginatedResponse } from '@/types';
 import { Transaction } from '@/app/generated/prisma';
+import { withRateLimit } from '@/lib/rate-limit';
+import { sanitizeObject } from '@/lib/sanitize';
 
 /**
  * GET /api/transactions
@@ -118,40 +120,46 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/transactions
- * 거래 내역 생성
+ * 거래 내역 생성 (Rate Limited: 1분당 20 요청)
  */
-export async function POST(request: NextRequest) {
-  try {
-    // 인증 확인
-    const userId = await requireUserId();
+export const POST = withRateLimit(
+  async (request: NextRequest) => {
+    try {
+      // 인증 확인
+      const userId = await requireUserId();
 
-    // 요청 바디 파싱
-    const body = await request.json();
+      // 요청 바디 파싱
+      const body = await request.json();
 
-    // 검증
-    const validatedData = createTransactionSchema.parse(body);
+      // XSS 방지: 입력 sanitization
+      const sanitizedBody = sanitizeObject(body);
 
-    // 거래 생성
-    const transaction = await prisma.transaction.create({
-      data: {
-        ...validatedData,
-        userId,
-        amount: validatedData.amount.toString(), // Decimal 변환
-        tags: validatedData.tags || [],
-      },
-    });
+      // 검증
+      const validatedData = createTransactionSchema.parse(sanitizedBody);
 
-    return successResponse(transaction, 201);
-  } catch (error) {
-    if (error instanceof ZodError) {
-      return zodErrorResponse(error);
+      // 거래 생성
+      const transaction = await prisma.transaction.create({
+        data: {
+          ...validatedData,
+          userId,
+          amount: validatedData.amount.toString(), // Decimal 변환
+          tags: validatedData.tags || [],
+        },
+      });
+
+      return successResponse(transaction, 201);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return zodErrorResponse(error);
+      }
+
+      if (error instanceof Error && error.message.includes('Unauthorized')) {
+        return unauthorizedResponse();
+      }
+
+      console.error('POST /api/transactions error:', error);
+      return serverErrorResponse();
     }
-
-    if (error instanceof Error && error.message.includes('Unauthorized')) {
-      return unauthorizedResponse();
-    }
-
-    console.error('POST /api/transactions error:', error);
-    return serverErrorResponse();
-  }
-}
+  },
+  { interval: 60000, maxRequests: 20 } // 1분당 20 요청
+);

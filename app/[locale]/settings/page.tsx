@@ -11,7 +11,18 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { User, DollarSign, Globe, Calendar, Save } from 'lucide-react';
+import { User, DollarSign, Globe, Calendar, Save, Trash2, AlertTriangle } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export default function SettingsPage() {
   const { data: session } = useSession();
@@ -58,6 +69,28 @@ export default function SettingsPage() {
     salaryDay !== userSettings?.salaryDay ||
     currency !== userSettings?.currency ||
     selectedLocale !== userSettings?.locale;
+
+  const handleDeleteAccount = async () => {
+    try {
+      const response = await fetch('/api/user/delete', {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete account');
+      }
+
+      toast.success(isKorean ? '계정이 삭제되었습니다' : 'Account deleted successfully');
+
+      // 로그아웃 및 로그인 페이지로 리다이렉트
+      setTimeout(() => {
+        window.location.href = `/${locale}/login`;
+      }, 1500);
+    } catch (error) {
+      toast.error(isKorean ? '계정 삭제 실패' : 'Failed to delete account');
+      console.error('Account deletion error:', error);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -191,6 +224,49 @@ export default function SettingsPage() {
               </SelectContent>
             </Select>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Danger Zone - Account Deletion */}
+      <Card className="border-destructive">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-destructive">
+            <AlertTriangle className="h-5 w-5" />
+            {isKorean ? '위험 구역' : 'Danger Zone'}
+          </CardTitle>
+          <CardDescription>
+            {isKorean
+              ? '계정을 삭제하면 모든 데이터가 영구적으로 삭제됩니다'
+              : 'Deleting your account will permanently erase all your data'}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" size="lg">
+                <Trash2 className="h-4 w-4 mr-2" />
+                {isKorean ? '계정 삭제' : 'Delete Account'}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  {isKorean ? '정말로 계정을 삭제하시겠습니까?' : 'Are you absolutely sure?'}
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {isKorean
+                    ? '이 작업은 되돌릴 수 없습니다. 계정과 모든 거래 내역, 설정이 영구적으로 삭제됩니다.'
+                    : 'This action cannot be undone. This will permanently delete your account and all transaction data.'}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{isKorean ? '취소' : 'Cancel'}</AlertDialogCancel>
+                <AlertDialogAction onClick={handleDeleteAccount} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  {isKorean ? '삭제' : 'Delete'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
 

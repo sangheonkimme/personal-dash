@@ -47,6 +47,7 @@ export function OnboardingDialog({ open, onComplete }: OnboardingDialogProps) {
       if (selectedLocale !== locale) {
         window.location.href = `/${selectedLocale}/dashboard`;
       } else {
+        // mutateAsync가 완료되면 onSuccess에서 invalidate도 완료됨
         onComplete();
       }
     } catch (error) {

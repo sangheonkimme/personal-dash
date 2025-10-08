@@ -11,9 +11,13 @@ import type {
  * 거래 내역 조회 훅
  *
  * @param params - 조회 파라미터 (날짜 범위, 페이지, 정렬 등)
+ * @param options - React Query options (enabled 등)
  * @returns 거래 내역 목록 및 메타데이터
  */
-export function useTransactions(params: GetTransactionsQuery) {
+export function useTransactions(
+  params: GetTransactionsQuery,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: ['transactions', params],
     queryFn: async () => {
@@ -21,7 +25,7 @@ export function useTransactions(params: GetTransactionsQuery) {
 
       // 파라미터를 쿼리 스트링으로 변환
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
+        if (value !== undefined && value !== null && value !== '') {
           searchParams.append(key, String(value));
         }
       });
@@ -38,6 +42,7 @@ export function useTransactions(params: GetTransactionsQuery) {
     },
     // 데이터가 자주 변경되므로 staleTime을 짧게 설정
     staleTime: 1 * 60 * 1000, // 1분
+    enabled: options?.enabled ?? true,
   });
 }
 

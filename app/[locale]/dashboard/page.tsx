@@ -32,17 +32,27 @@ export default function DashboardPage() {
     anchorDate,
   });
 
-  // 거래 내역 조회
-  const { data: transactionsData, isLoading: transactionsLoading } = useTransactions({
-    startDate: payPeriod?.startISO || '',
-    endDate: payPeriod?.endISO || '',
-  });
+  // 거래 내역 조회 (payPeriod가 있을 때만 활성화)
+  const { data: transactionsData, isLoading: transactionsLoading } = useTransactions(
+    {
+      startDate: payPeriod?.startISO || '',
+      endDate: payPeriod?.endISO || '',
+    },
+    {
+      enabled: !!payPeriod?.startISO && !!payPeriod?.endISO,
+    }
+  );
 
-  // 통계 조회
-  const { data: summary, isLoading: summaryLoading } = useSummary({
-    startDate: payPeriod?.startISO || '',
-    endDate: payPeriod?.endISO || '',
-  });
+  // 통계 조회 (payPeriod가 있을 때만 활성화)
+  const { data: summary, isLoading: summaryLoading } = useSummary(
+    {
+      startDate: payPeriod?.startISO || '',
+      endDate: payPeriod?.endISO || '',
+    },
+    {
+      enabled: !!payPeriod?.startISO && !!payPeriod?.endISO,
+    }
+  );
 
   // 첫 로그인 감지 (salaryDay가 null이면 온보딩 필요)
   useEffect(() => {
@@ -55,8 +65,7 @@ export default function DashboardPage() {
 
   const handleOnboardingComplete = () => {
     setShowOnboarding(false);
-    // 설정 완료 후 페이지 새로고침하여 데이터 다시 로드
-    window.location.reload();
+    // React Query가 자동으로 데이터를 무효화하므로 별도 새로고침 불필요
   };
 
   // 로딩 상태

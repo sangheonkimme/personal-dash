@@ -252,6 +252,7 @@ export function TransactionGrid({
             sortable: true,
             filter: true,
           }}
+          theme="legacy"
           onGridReady={onGridReady}
           onCellEditingStopped={onCellEditingStopped}
           rowSelection="multiple"

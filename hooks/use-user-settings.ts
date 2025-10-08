@@ -83,10 +83,11 @@ export function useUpdateUserSettings() {
         queryClient.setQueryData(['userSettings'], context.previousSettings);
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userSettings'] });
+    onSuccess: async () => {
+      // 무효화 후 즉시 refetch하여 최신 데이터 보장
+      await queryClient.invalidateQueries({ queryKey: ['userSettings'] });
       // salaryDay 변경 시 급여월도 무효화
-      queryClient.invalidateQueries({ queryKey: ['payPeriod'] });
+      await queryClient.invalidateQueries({ queryKey: ['payPeriod'] });
     },
   });
 }
