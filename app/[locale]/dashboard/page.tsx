@@ -57,9 +57,16 @@ export default function DashboardPage() {
   // 첫 로그인 감지 (salaryDay가 null이면 온보딩 필요)
   useEffect(() => {
     if (userSettings && !settingsLoading) {
-      if (userSettings.salaryDay === null || userSettings.salaryDay === undefined) {
-        setShowOnboarding(true);
-      }
+      // 이미 온보딩을 완료한 경우(showOnboarding이 false로 설정된 적이 있음) 다시 열지 않음
+      setShowOnboarding((prev) => {
+        // 이미 false면 그대로 유지
+        if (prev === false) return false;
+        // salaryDay가 null이면 온보딩 필요
+        if (userSettings.salaryDay === null || userSettings.salaryDay === undefined) {
+          return true;
+        }
+        return false;
+      });
     }
   }, [userSettings, settingsLoading]);
 
