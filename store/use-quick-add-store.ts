@@ -11,12 +11,12 @@ interface QuickAddState {
   rawInput: string;
 
   /**
-   * 입력 타입 토글 (해시태그가 없을 때 사용)
+   * 해시태그 없는 경우 기본 거래 타입
    */
   fallbackType: TransactionType;
 
   /**
-   * 고정 지출 토글 (해시태그가 없을 때 사용)
+   * 해시태그 없는 경우 기본 고정 여부
    */
   fallbackFixed: boolean;
 
@@ -26,14 +26,14 @@ interface QuickAddState {
   setRawInput: (input: string) => void;
 
   /**
-   * 타입 설정
+   * 타입 기본값 설정
    */
-  toggleType: (type: TransactionType) => void;
+  setFallbackType: (type: TransactionType) => void;
 
   /**
-   * 고정 여부 설정
+   * 고정 여부 기본값 설정
    */
-  toggleFixed: (fixed: boolean) => void;
+  setFallbackFixed: (fixed: boolean) => void;
 
   /**
    * 입력 초기화
@@ -55,14 +55,9 @@ export const useQuickAddStore = create<QuickAddState>((set) => ({
 
   setRawInput: (input) => set({ rawInput: input }),
 
-  toggleType: (type) => set({ fallbackType: type }),
+  setFallbackType: (type) => set({ fallbackType: type }),
 
-  toggleFixed: (fixed) => set({ fallbackFixed: fixed }),
+  setFallbackFixed: (fixed) => set({ fallbackFixed: fixed }),
 
-  reset: () =>
-    set({
-      rawInput: '',
-      fallbackType: TransactionType.expense,
-      fallbackFixed: false,
-    }),
+  reset: () => set({ rawInput: '' }),
 }));

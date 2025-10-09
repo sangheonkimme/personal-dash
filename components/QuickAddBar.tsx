@@ -1,214 +1,295 @@
 'use client';
 
-import { useState, KeyboardEvent } from 'react';
+import { type KeyboardEvent } from 'react';
 import { useLocale } from 'next-intl';
-import { useQuickAddStore } from '@/store/use-quick-add-store';
-import { useCreateTransaction } from '@/hooks/use-transactions';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Plus } from 'lucide-react';
-import dayjs from 'dayjs';
+
 import { TransactionType } from '@/app/generated/prisma';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import {
+  useQuickAddController,
+  type QuickAddController as QuickAddControllerState,
+} from '@/hooks/use-quick-add-controller';
 
-export function QuickAddBar() {
-  const locale = useLocale() as 'ko' | 'en';
-  const isKorean = locale === 'ko';
+interface QuickAddBarProps {
+  currency?: string;
+}
 
-  const { fallbackType, fallbackFixed, toggleType, toggleFixed, reset } = useQuickAddStore();
+const PLACEHOLDER: Record<'ko' | 'en', string> = {
+  ko: '예: 10/05 점심 9,000원 #식비 #변동 카드',
+  en: 'Example: 10/05 Lunch 12,000 #food #variable card',
+};
 
-  // 개별 필드 상태
-  const [date, setDate] = useState<string>(dayjs().format('YYYY-MM-DD'));
-  const [type, setType] = useState<TransactionType>(TransactionType.expense);
-  const [description, setDescription] = useState<string>('');
-  const [amount, setAmount] = useState<string>('');
-  const [fixed, setFixed] = useState<boolean>(false);
-  const [category, setCategory] = useState<string>('expense'); // expense, income, saving
-  const [validationError, setValidationError] = useState<string>('');
+const TIP: Record<'ko' | 'en', string> = {
+  ko: '#해시태그, 날짜, 금액을 한 줄로 입력하고 ⌘⏎ 또는 Ctrl+Enter로 저장하세요.',
+  en: 'Add hashtags, date, and amount on one line. Press ⌘⏎ or Ctrl+Enter to save.',
+};
 
-  const createTransaction = useCreateTransaction();
+const SUBMIT_LABEL: Record<'ko' | 'en', string> = {
+  ko: '거래 추가',
+  en: 'Add Transaction',
+};
+
+const SUBMIT_LOADING: Record<'ko' | 'en', string> = {
+  ko: '추가 중...',
+  en: 'Adding...',
+};
+
+const ERROR_EMPTY_AMOUNT: Record<'ko' | 'en', string> = {
+  ko: '입력값을 확인해주세요.',
+  en: 'Please check the quick entry.',
+};
+
+const ERROR_SUBMIT: Record<'ko' | 'en', string> = {
+  ko: '거래 추가에 실패했어요.',
+  en: 'Failed to add transaction.',
+};
+
+const SUCCESS_SUBMIT: Record<'ko' | 'en', string> = {
+  ko: '빠른 입력으로 거래를 추가했어요.',
+  en: 'Transaction added successfully.',
+};
+
+const TYPE_LABEL: Record<'ko' | 'en', Record<TransactionType, string>> = {
+  ko: {
+    [TransactionType.expense]: '지출',
+    [TransactionType.income]: '수입',
+  },
+  en: {
+    [TransactionType.expense]: 'Expense',
+    [TransactionType.income]: 'Income',
+  },
+};
+
+const FIXED_LABEL: Record<'ko' | 'en', { fixed: string; variable: string }> = {
+  ko: { fixed: '고정', variable: '변동' },
+  en: { fixed: 'Fixed', variable: 'Variable' },
+};
+
+export function QuickAddBar({ currency = 'KRW' }: QuickAddBarProps) {
+  const locale = (useLocale() as 'ko' | 'en') ?? 'ko';
+  const controller = useQuickAddController({ locale, currency });
 
   const handleSubmit = async () => {
-    // 검증
-    const amountNum = parseFloat(amount.replace(/,/g, ''));
-    if (!amount || isNaN(amountNum) || amountNum <= 0) {
-      setValidationError(isKorean ? '금액을 입력해주세요' : 'Please enter a valid amount');
-      toast.error(isKorean ? '금액을 입력해주세요' : 'Please enter a valid amount');
+    if (!controller.canSubmit) {
+      toast.error(ERROR_EMPTY_AMOUNT[locale]);
       return;
-    }
-
-    if (!description.trim()) {
-      setValidationError(isKorean ? '내용을 입력해주세요' : 'Please enter description');
-      toast.error(isKorean ? '내용을 입력해주세요' : 'Please enter description');
-      return;
-    }
-
-    setValidationError('');
-
-    // 구분에 따라 type 결정
-    let transactionType = type;
-    let transactionCategory = '';
-
-    if (category === 'saving') {
-      // 저축은 expense로 처리하되 카테고리를 '저축'으로 설정
-      transactionType = TransactionType.expense;
-      transactionCategory = isKorean ? '저축' : 'Saving';
-    } else if (category === 'income') {
-      transactionType = TransactionType.income;
-      transactionCategory = isKorean ? '미분류' : 'Uncategorized';
-    } else {
-      transactionType = TransactionType.expense;
-      transactionCategory = isKorean ? '미분류' : 'Uncategorized';
     }
 
     try {
-      await createTransaction.mutateAsync({
-        date: dayjs(date).toISOString(),
-        amount: amountNum,
-        type: transactionType,
-        fixed: fixed,
-        category: transactionCategory,
-        description: description.trim(),
-        paymentMethod: null,
-        tags: [category],
-      });
-
-      toast.success(isKorean ? '거래가 추가되었습니다' : 'Transaction added');
-
-      // 필드 초기화
-      setDate(dayjs().format('YYYY-MM-DD'));
-      setDescription('');
-      setAmount('');
-      setValidationError('');
-      // type, fixed, category는 유지
+      await controller.submit();
+      toast.success(SUCCESS_SUBMIT[locale]);
     } catch (error) {
-      toast.error(isKorean ? '거래 추가 실패' : 'Failed to add transaction');
-      console.error('Quick add error:', error);
+      console.error('QuickAddBar submission failed', error);
+      toast.error(ERROR_SUBMIT[locale]);
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && (event.metaKey || event.ctrlKey || !event.shiftKey)) {
+      event.preventDefault();
       handleSubmit();
     }
   };
 
-  // 금액 포맷팅 (쉼표 추가)
-  const handleAmountChange = (value: string) => {
-    const numericValue = value.replace(/[^\d]/g, '');
-    if (numericValue) {
-      const formatted = parseInt(numericValue).toLocaleString();
-      setAmount(formatted);
-    } else {
-      setAmount('');
-    }
-  };
+  return (
+    <Card className="space-y-4 p-5 shadow-sm sm:p-6">
+      <QuickAddHeader locale={locale} />
+
+      <div className="space-y-3">
+        <textarea
+          value={controller.rawInput}
+          onChange={(event) => controller.setRawInput(event.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={PLACEHOLDER[locale]}
+          className="min-h-[72px] w-full resize-y rounded-md border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+          disabled={controller.isSubmitting}
+        />
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <FallbackControls controller={controller} locale={locale} />
+
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={!controller.canSubmit || controller.isSubmitting}
+            className="sm:w-auto"
+          >
+            {controller.isSubmitting ? SUBMIT_LOADING[locale] : SUBMIT_LABEL[locale]}
+          </Button>
+        </div>
+      </div>
+
+      {controller.rawInput.trim().length > 0 && (
+        <QuickAddPreview locale={locale} controller={controller} />
+      )}
+
+      {controller.validationMessage && (
+        <p className="text-sm text-destructive">{controller.validationMessage}</p>
+      )}
+    </Card>
+  );
+}
+
+interface QuickAddHeaderProps {
+  locale: 'ko' | 'en';
+}
+
+function QuickAddHeader({ locale }: QuickAddHeaderProps) {
+  return (
+    <div className="space-y-1">
+      <h3 className="text-base font-semibold text-gray-800">
+        {locale === 'ko' ? '빠른 입력' : 'Quick Add'}
+      </h3>
+      <p className="text-sm text-gray-500">{TIP[locale]}</p>
+    </div>
+  );
+}
+
+interface FallbackControlsProps {
+  controller: QuickAddControllerState;
+  locale: 'ko' | 'en';
+}
+
+function FallbackControls({ controller, locale }: FallbackControlsProps) {
+  const labels = TYPE_LABEL[locale];
+  const fixedLabels = FIXED_LABEL[locale];
 
   return (
-    <Card className="p-5 sm:p-6 shadow-sm">
-      <h3 className="text-base font-semibold mb-4 text-gray-700">{isKorean ? '항목 추가' : 'Add Transaction'}</h3>
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-xs font-medium uppercase tracking-wide text-gray-500">
+        {locale === 'ko' ? '기본 타입' : 'Fallback Type'}
+      </span>
+      <div className="flex gap-1">
+        {Object.values(TransactionType).map((type) => (
+          <Button
+            key={type}
+            type="button"
+            variant={controller.fallbackType === type ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => controller.setFallbackType(type)}
+            disabled={controller.isSubmitting}
+          >
+            {labels[type]}
+          </Button>
+        ))}
+      </div>
 
-      <div className="space-y-4">
-        {/* 입력 필드 - 날짜, 유형, 내용, 금액, 구분 순서 */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3">
-          {/* 날짜 */}
-          <div className="lg:col-span-2">
-            <label className="text-xs font-medium text-gray-600 mb-1.5 block">{isKorean ? '날짜' : 'Date'}</label>
-            <Input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              className="h-10"
-            />
-          </div>
+      <span className="ml-3 text-xs font-medium uppercase tracking-wide text-gray-500">
+        {locale === 'ko' ? '고정 여부' : 'Fixed?'}
+      </span>
+      <div className="flex gap-1">
+        <Button
+          type="button"
+          variant={controller.fallbackFixed ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => controller.setFallbackFixed(true)}
+          disabled={controller.isSubmitting}
+        >
+          {fixedLabels.fixed}
+        </Button>
+        <Button
+          type="button"
+          variant={!controller.fallbackFixed ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => controller.setFallbackFixed(false)}
+          disabled={controller.isSubmitting}
+        >
+          {fixedLabels.variable}
+        </Button>
+      </div>
+    </div>
+  );
+}
 
-          {/* 유형 (고정/변동) - 라디오 버튼 스타일 */}
-          <div className="lg:col-span-2">
-            <label className="text-xs font-medium text-gray-600 mb-1.5 block">{isKorean ? '유형' : 'Type'}</label>
-            <div className="flex border border-gray-200 rounded-md overflow-hidden h-10">
-              <button
-                type="button"
-                onClick={() => setFixed(true)}
-                className={`flex-1 text-sm font-medium transition-colors ${
-                  fixed
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                {isKorean ? '고정' : 'Fixed'}
-              </button>
-              <div className="w-px bg-gray-200" />
-              <button
-                type="button"
-                onClick={() => setFixed(false)}
-                className={`flex-1 text-sm font-medium transition-colors ${
-                  !fixed
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
-              >
-                {isKorean ? '변동' : 'Variable'}
-              </button>
-            </div>
-          </div>
+interface QuickAddPreviewProps {
+  controller: QuickAddControllerState;
+  locale: 'ko' | 'en';
+}
 
-          {/* 내용 */}
-          <div className="lg:col-span-4">
-            <label className="text-xs font-medium text-gray-600 mb-1.5 block">{isKorean ? '내용' : 'Description'}</label>
-            <Input
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={isKorean ? '예: 점심 식사' : 'e.g., Lunch'}
-              className="h-10"
-            />
-          </div>
+function QuickAddPreview({ controller, locale }: QuickAddPreviewProps) {
+  const { preview } = controller;
+  const typeLabels = TYPE_LABEL[locale];
+  const fixedLabels = FIXED_LABEL[locale];
 
-          {/* 금액 */}
-          <div className="lg:col-span-2">
-            <label className="text-xs font-medium text-gray-600 mb-1.5 block">{isKorean ? '금액' : 'Amount'}</label>
-            <Input
-              value={amount}
-              onChange={(e) => handleAmountChange(e.target.value)}
-              onKeyDown={handleKeyDown}
-              placeholder={isKorean ? '예: 10000' : 'e.g., 100'}
-              className="h-10"
-            />
-          </div>
+  return (
+    <div className="space-y-3 rounded-md border border-dashed border-gray-200 bg-gray-50/60 p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge
+          className={cn(
+            'border-transparent capitalize text-white',
+            preview.type === TransactionType.income ? 'bg-emerald-500' : 'bg-rose-500'
+          )}
+        >
+          {typeLabels[preview.type]}
+        </Badge>
 
-          {/* 구분 (지출/수입/저축) - Select */}
-          <div className="lg:col-span-1">
-            <label className="text-xs font-medium text-gray-600 mb-1.5 block">{isKorean ? '구분' : 'Category'}</label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="h-10">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="expense">{isKorean ? '지출' : 'Expense'}</SelectItem>
-                <SelectItem value="income">{isKorean ? '수입' : 'Income'}</SelectItem>
-                <SelectItem value="saving">{isKorean ? '저축' : 'Saving'}</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+        <Badge
+          className={cn(
+            'border-transparent',
+            preview.fixed ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'
+          )}
+        >
+          {preview.fixed ? fixedLabels.fixed : fixedLabels.variable}
+        </Badge>
 
-          {/* 추가 버튼 */}
-          <div className="lg:col-span-1 flex items-end">
-            <Button
-              onClick={handleSubmit}
-              disabled={createTransaction.isPending || !!validationError}
-              className="w-full h-10 bg-blue-500 hover:bg-blue-600 text-white"
-            >
-              <Plus className="h-4 w-4 mr-1" />
-              {isKorean ? '추가' : 'Add'}
-            </Button>
-          </div>
+        {preview.amountLabel && (
+          <Badge variant="outline" className="bg-white text-gray-800">
+            {preview.amountLabel}
+          </Badge>
+        )}
+
+        <Badge variant="outline" className="bg-white text-gray-800">
+          {preview.dateLabel}
+        </Badge>
+      </div>
+
+      <dl className="grid gap-2 text-sm sm:grid-cols-2">
+        <div>
+          <dt className="text-xs uppercase text-gray-500">
+            {locale === 'ko' ? '설명' : 'Description'}
+          </dt>
+          <dd className="font-medium text-gray-900">{preview.description}</dd>
         </div>
 
-        {validationError && <p className="text-sm text-destructive">{validationError}</p>}
-      </div>
-    </Card>
+        <div>
+          <dt className="text-xs uppercase text-gray-500">
+            {locale === 'ko' ? '카테고리' : 'Category'}
+          </dt>
+          <dd className="font-medium text-gray-900">
+            {preview.subcategory
+              ? `${preview.category} • ${preview.subcategory}`
+              : preview.category}
+          </dd>
+        </div>
+
+        {preview.paymentMethod && (
+          <div>
+            <dt className="text-xs uppercase text-gray-500">
+              {locale === 'ko' ? '결제수단' : 'Payment Method'}
+            </dt>
+            <dd className="font-medium text-gray-900">{preview.paymentMethod}</dd>
+          </div>
+        )}
+
+        {preview.tags.length > 0 && (
+          <div className="sm:col-span-2">
+            <dt className="text-xs uppercase text-gray-500">
+              {locale === 'ko' ? '태그' : 'Tags'}
+            </dt>
+            <dd className="mt-1 flex flex-wrap gap-1">
+              {preview.tags.map((tag) => (
+                <Badge key={tag} variant="secondary" className="capitalize">
+                  #{tag}
+                </Badge>
+              ))}
+            </dd>
+          </div>
+        )}
+      </dl>
+    </div>
   );
 }

@@ -121,7 +121,7 @@ export default function DashboardPage() {
         />
 
         {/* Quick Add Bar */}
-        <QuickAddBar />
+        <QuickAddBar currency={currency} />
 
         {/* Period Chips */}
         <PeriodChips salaryDay={salaryDay} maxMonths={24} />
