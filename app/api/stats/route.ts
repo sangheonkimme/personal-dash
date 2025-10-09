@@ -40,11 +40,12 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // 지출 합계
-    const expenseResult = await prisma.transaction.aggregate({
+    // 저축 합계 (카테고리가 "저축"인 거래)
+    const savingResult = await prisma.transaction.aggregate({
       where: {
         userId,
         type: 'expense',
+        category: '저축',
         date: {
           gte: new Date(startDate),
           lte: new Date(endDate),
@@ -55,12 +56,33 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // 고정 지출 합계
+    // 지출 합계 (저축 제외)
+    const expenseResult = await prisma.transaction.aggregate({
+      where: {
+        userId,
+        type: 'expense',
+        category: {
+          not: '저축',
+        },
+        date: {
+          gte: new Date(startDate),
+          lte: new Date(endDate),
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+
+    // 고정 지출 합계 (저축 제외)
     const fixedExpenseResult = await prisma.transaction.aggregate({
       where: {
         userId,
         type: 'expense',
         fixed: true,
+        category: {
+          not: '저축',
+        },
         date: {
           gte: new Date(startDate),
           lte: new Date(endDate),
@@ -72,13 +94,11 @@ export async function GET(request: NextRequest) {
     });
 
     const income = Number(incomeResult._sum.amount || 0);
+    const saving = Number(savingResult._sum.amount || 0);
     const expense = Number(expenseResult._sum.amount || 0);
     const fixedExpense = Number(fixedExpenseResult._sum.amount || 0);
     const variableExpense = expense - fixedExpense;
-    const saving = income - expense;
-
-    // TODO: balance는 이전 기간 누적 계산 필요 (추후 구현)
-    const balance = saving;
+    const balance = income - expense - saving;
 
     const summary: PeriodSummary = {
       income,

@@ -78,17 +78,23 @@ export function TransactionGrid({
         field: 'type',
         sortable: true,
         filter: true,
-        editable: true,
+        editable: false,
         width: 100,
         cellStyle: (params) => {
-          if (params.value === 'income') {
-            return { color: 'green', fontWeight: 'bold' };
+          // 저축은 블루, 수입은 그린, 지출은 레드
+          const row = params.data as BaseRow;
+          if (row.category === '저축') {
+            return { color: '#2563eb', fontWeight: 'bold' }; // blue-600
+          } else if (params.value === 'income') {
+            return { color: '#059669', fontWeight: 'bold' }; // green-600
           } else if (params.value === 'expense') {
-            return { color: 'red', fontWeight: 'bold' };
+            return { color: '#dc2626', fontWeight: 'bold' }; // red-600
           }
           return undefined;
         },
         valueFormatter: (params) => {
+          const row = params.data as BaseRow;
+          if (row.category === '저축') return isKorean ? '저축' : 'Saving';
           if (params.value === 'income') return isKorean ? '수입' : 'Income';
           if (params.value === 'expense') return isKorean ? '지출' : 'Expense';
           return params.value;
@@ -251,8 +257,11 @@ export function TransactionGrid({
                     <p className="text-sm font-medium text-gray-900">{row.description || row.category}</p>
                     <p className="text-xs text-gray-500">{dayjs(row.date).format('YYYY-MM-DD')}</p>
                   </div>
-                  <div className={cn('text-sm font-semibold', row.type === 'income' ? 'text-green-600' : 'text-red-600')}>
-                    {row.type === 'income' ? '+' : '-'}
+                  <div className={cn('text-sm font-semibold',
+                    row.category === '저축' ? 'text-blue-600' :
+                    row.type === 'income' ? 'text-green-600' : 'text-red-600'
+                  )}>
+                    {row.category === '저축' ? '' : row.type === 'income' ? '+' : '-'}
                     {currency === 'KRW' ? '₩' : currency}
                     {row.amount.toLocaleString()}
                   </div>
@@ -284,8 +293,11 @@ export function TransactionGrid({
                     <p className="text-sm font-medium text-gray-900">{row.description || row.category}</p>
                     <p className="text-xs text-gray-500">{dayjs(row.date).format('YYYY-MM-DD')}</p>
                   </div>
-                  <div className={cn('text-sm font-semibold', row.type === 'income' ? 'text-green-600' : 'text-red-600')}>
-                    {row.type === 'income' ? '+' : '-'}
+                  <div className={cn('text-sm font-semibold',
+                    row.category === '저축' ? 'text-blue-600' :
+                    row.type === 'income' ? 'text-green-600' : 'text-red-600'
+                  )}>
+                    {row.category === '저축' ? '' : row.type === 'income' ? '+' : '-'}
                     {currency === 'KRW' ? '₩' : currency}
                     {row.amount.toLocaleString()}
                   </div>
