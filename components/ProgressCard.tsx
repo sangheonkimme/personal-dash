@@ -39,15 +39,30 @@ export function ProgressCard({
   const getVariantStyles = () => {
     switch (variant) {
       case 'income':
-        return 'border-green-200 dark:border-green-800';
+        return 'border-2 border-green-200 bg-green-50/50';
       case 'expense':
-        return 'border-red-200 dark:border-red-800';
+        return 'border-2 border-red-200 bg-red-50/50';
       case 'saving':
-        return 'border-blue-200 dark:border-blue-800';
+        return 'border-2 border-blue-200 bg-blue-50/50';
       case 'balance':
-        return 'border-purple-200 dark:border-purple-800';
+        return 'border-2 border-purple-200 bg-purple-50/50';
       default:
-        return '';
+        return 'border border-gray-200';
+    }
+  };
+
+  const getAmountColor = () => {
+    switch (variant) {
+      case 'income':
+        return 'text-green-600';
+      case 'expense':
+        return 'text-red-600';
+      case 'saving':
+        return 'text-blue-600';
+      case 'balance':
+        return 'text-purple-600';
+      default:
+        return 'text-foreground';
     }
   };
 
@@ -71,7 +86,7 @@ export function ProgressCard({
     const isGoodChange =
       variant === 'expense' ? !isPositiveChange : isPositiveChange;
 
-    return isGoodChange ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400';
+    return isGoodChange ? 'text-green-600' : 'text-red-600';
   };
 
   if (isLoading) {
@@ -90,15 +105,15 @@ export function ProgressCard({
   }
 
   return (
-    <Card className={getVariantStyles()}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 p-4 sm:p-6">
-        <CardTitle className="text-xs sm:text-sm font-medium text-muted-foreground truncate">{title}</CardTitle>
+    <Card className={cn('shadow-sm hover:shadow-md transition-shadow', getVariantStyles())}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3 p-5 sm:p-6">
+        <CardTitle className="text-sm sm:text-base font-semibold text-gray-600 truncate">{title}</CardTitle>
         {icon}
       </CardHeader>
-      <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
-        <div className="text-lg sm:text-2xl font-bold truncate">{formatCurrency(amount)}</div>
+      <CardContent className="p-5 pt-0 sm:p-6 sm:pt-0">
+        <div className={cn("text-2xl sm:text-3xl font-bold truncate", getAmountColor())}>{formatCurrency(amount)}</div>
         {changePercent !== undefined && changePercent !== null && (
-          <div className={cn('flex items-center gap-1 text-xs font-medium mt-1', getChangeColor())}>
+          <div className={cn('flex items-center gap-1 text-xs font-medium mt-2', getChangeColor())}>
             {getChangeIcon()}
             <span>{Math.abs(changePercent).toFixed(1)}%</span>
             <span className="hidden sm:inline text-muted-foreground">vs last month</span>
@@ -125,30 +140,30 @@ export function ProgressCardGrid({
   isLoading?: boolean;
 }) {
   return (
-    <div className="grid gap-3 grid-cols-2 lg:grid-cols-4 sm:gap-4">
+    <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
       <ProgressCard
-        title="💰 Income"
+        title="총 수입"
         amount={income}
         currency={currency}
         variant="income"
         isLoading={isLoading}
       />
       <ProgressCard
-        title="💸 Expense"
+        title="총 지출"
         amount={expense}
         currency={currency}
         variant="expense"
         isLoading={isLoading}
       />
       <ProgressCard
-        title="💎 Saving"
+        title="총 저축"
         amount={saving}
         currency={currency}
         variant="saving"
         isLoading={isLoading}
       />
       <ProgressCard
-        title="🏦 Balance"
+        title="잔액"
         amount={balance}
         currency={currency}
         variant="balance"

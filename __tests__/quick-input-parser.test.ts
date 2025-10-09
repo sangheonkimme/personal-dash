@@ -2,6 +2,12 @@ import { parseQuickInput } from '@/lib/parsers/quick-input';
 import { TransactionType } from '@/app/generated/prisma';
 import dayjs from 'dayjs';
 
+/**
+ * parseQuickInput 파서 테스트
+ *
+ * 참고: 현재 QuickAddBar 컴포넌트는 개별 필드 입력 방식으로 변경되었습니다.
+ * 이 파서는 향후 빠른 입력 모드나 CLI 도구에서 사용할 수 있도록 유지됩니다.
+ */
 describe('parseQuickInput', () => {
   describe('한국어 입력 파싱', () => {
     test('완전한 입력 - 날짜, 금액, 카테고리, 해시태그', () => {

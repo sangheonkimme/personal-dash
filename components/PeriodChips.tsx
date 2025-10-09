@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { usePeriodStore } from '@/store/use-period-store';
 import { Badge } from '@/components/ui/badge';
@@ -13,24 +13,28 @@ interface PeriodChipsProps {
   maxMonths?: number;
 }
 
-export function PeriodChips({ salaryDay, maxMonths = 24 }: PeriodChipsProps) {
+export function PeriodChips({ maxMonths = 24 }: PeriodChipsProps) {
   const { anchorDate, setAnchorDate, goToPreviousPeriod, goToNextPeriod, resetToToday } = usePeriodStore();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
 
   const currentAnchor = dayjs(anchorDate);
+  const isKorean = true; // Default to Korean for now
 
   // 현재 선택된 달을 기준으로 ±maxMonths 범위 생성
-  const periods = [];
-  for (let i = -maxMonths; i <= maxMonths; i++) {
-    const periodAnchor = currentAnchor.add(i, 'month');
-    periods.push({
-      anchor: periodAnchor.toISOString(),
-      label: periodAnchor.format('YYYY년 MM월'),
-      isCurrent: i === 0,
-    });
-  }
+  const periods = useMemo(() => {
+    const result = [];
+    for (let i = -maxMonths; i <= maxMonths; i++) {
+      const periodAnchor = currentAnchor.add(i, 'month');
+      result.push({
+        anchor: periodAnchor.toISOString(),
+        label: periodAnchor.format('YYYY년 MM월'),
+        isCurrent: i === 0,
+      });
+    }
+    return result;
+  }, [currentAnchor, maxMonths]);
 
   // 스크롤 상태 확인
   const checkScrollButtons = () => {
@@ -66,7 +70,7 @@ export function PeriodChips({ salaryDay, maxMonths = 24 }: PeriodChipsProps) {
     setAnchorDate(anchor);
   };
 
-  const handleKeyDown = (e: KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === 'ArrowLeft') {
       goToPreviousPeriod();
     } else if (e.key === 'ArrowRight') {
@@ -74,61 +78,72 @@ export function PeriodChips({ salaryDay, maxMonths = 24 }: PeriodChipsProps) {
     } else if (e.key === 'Home') {
       resetToToday();
     }
-  };
+  }, [goToPreviousPeriod, goToNextPeriod, resetToToday]);
 
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [handleKeyDown]);
 
   return (
-    <div className="relative flex items-center gap-1 sm:gap-2">
-      {/* 이전 버튼 */}
-      {showLeftArrow && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute left-0 z-10 bg-background/90 backdrop-blur-sm h-8 w-8 sm:h-10 sm:w-10 shadow-md"
-          onClick={handleScrollLeft}
-        >
-          <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-        </Button>
-      )}
-
-      {/* 칩 컨테이너 */}
-      <div
-        ref={scrollContainerRef}
-        onScroll={checkScrollButtons}
-        className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide scroll-smooth px-8 sm:px-10 py-1"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {periods.map((period) => (
-          <Badge
-            key={period.anchor}
-            variant={period.isCurrent ? 'default' : 'outline'}
-            className={cn(
-              'cursor-pointer whitespace-nowrap px-2.5 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm transition-all hover:scale-105 active:scale-95',
-              period.isCurrent && 'ring-1 sm:ring-2 ring-ring ring-offset-1 sm:ring-offset-2'
-            )}
-            data-current={period.isCurrent}
-            onClick={() => handlePeriodClick(period.anchor)}
-          >
-            {period.label}
-          </Badge>
-        ))}
+    <div className="bg-gray-50 rounded-lg p-4 shadow-sm">
+      <div className="flex items-center gap-3 mb-3">
+        <h3 className="text-sm font-semibold text-gray-700">{isKorean ? '월 선택' : 'Select Period'}</h3>
+        <span className="text-xs text-gray-500">
+          {currentAnchor.format('YYYY년 MM월')}
+        </span>
       </div>
 
-      {/* 다음 버튼 */}
-      {showRightArrow && (
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-0 z-10 bg-background/90 backdrop-blur-sm h-8 w-8 sm:h-10 sm:w-10 shadow-md"
-          onClick={handleScrollRight}
+      <div className="relative flex items-center gap-1 sm:gap-2">
+        {/* 이전 버튼 */}
+        {showLeftArrow && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute left-0 z-10 bg-white shadow-md h-9 w-9 sm:h-10 sm:w-10 rounded-full hover:bg-gray-100"
+            onClick={handleScrollLeft}
+          >
+            <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
+          </Button>
+        )}
+
+        {/* 칩 컨테이너 */}
+        <div
+          ref={scrollContainerRef}
+          onScroll={checkScrollButtons}
+          className="flex gap-2 overflow-x-auto scrollbar-hide scroll-smooth px-10 sm:px-12 py-2"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
-          <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
-        </Button>
-      )}
+          {periods.map((period) => (
+            <Badge
+              key={period.anchor}
+              variant={period.isCurrent ? 'default' : 'outline'}
+              className={cn(
+                'cursor-pointer whitespace-nowrap px-4 py-2.5 text-sm font-medium transition-all hover:scale-105 active:scale-95',
+                period.isCurrent
+                  ? 'bg-blue-500 text-white ring-2 ring-blue-300 ring-offset-2 shadow-lg'
+                  : 'bg-white hover:bg-blue-50 hover:border-blue-400 border-gray-300'
+              )}
+              data-current={period.isCurrent}
+              onClick={() => handlePeriodClick(period.anchor)}
+            >
+              {period.label}
+            </Badge>
+          ))}
+        </div>
+
+        {/* 다음 버튼 */}
+        {showRightArrow && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-0 z-10 bg-white shadow-md h-9 w-9 sm:h-10 sm:w-10 rounded-full hover:bg-gray-100"
+            onClick={handleScrollRight}
+          >
+            <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

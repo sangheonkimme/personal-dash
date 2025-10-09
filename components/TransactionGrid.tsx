@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Download, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import dayjs from 'dayjs';
+import { cn } from '@/lib/utils';
 
 // ag-Grid 모듈 등록
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -227,55 +228,127 @@ export function TransactionGrid({
   const balance = totalIncome - totalExpense;
 
   return (
-    <div className="space-y-4">
-      {/* 상단 툴바 */}
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-muted-foreground">
-          {isKorean ? '거래 내역' : 'Transactions'}: <span className="font-semibold">{rows.length}</span>
+    <div className="space-y-6">
+      {/* 고정 지출/수입 섹션 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 고정 지출 */}
+        <div className="bg-white rounded-lg shadow-sm p-5">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-base font-semibold text-gray-700">{isKorean ? '고정 지출/수입' : 'Fixed Transactions'}</h3>
+            <span className="text-sm text-gray-500">
+              {rows.filter((r) => r.fixed).length}{isKorean ? '건' : ' items'}
+            </span>
+          </div>
+          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+            {rows
+              .filter((r) => r.fixed)
+              .map((row) => (
+                <div
+                  key={row.id}
+                  className="flex justify-between items-center p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{row.description || row.category}</p>
+                    <p className="text-xs text-gray-500">{dayjs(row.date).format('YYYY-MM-DD')}</p>
+                  </div>
+                  <div className={cn('text-sm font-semibold', row.type === 'income' ? 'text-green-600' : 'text-red-600')}>
+                    {row.type === 'income' ? '+' : '-'}
+                    {currency === 'KRW' ? '₩' : currency}
+                    {row.amount.toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            {rows.filter((r) => r.fixed).length === 0 && (
+              <p className="text-sm text-gray-400 text-center py-8">{isKorean ? '고정 거래 내역이 없습니다' : 'No fixed transactions'}</p>
+            )}
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleExportCSV}>
-            <Download className="h-4 w-4 mr-1" />
-            CSV
-          </Button>
+
+        {/* 변동 지출/수입 */}
+        <div className="bg-white rounded-lg shadow-sm p-5">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-base font-semibold text-gray-700">{isKorean ? '변동 지출/수입' : 'Variable Transactions'}</h3>
+            <span className="text-sm text-gray-500">
+              {rows.filter((r) => !r.fixed).length}{isKorean ? '건' : ' items'}
+            </span>
+          </div>
+          <div className="space-y-2 max-h-[300px] overflow-y-auto">
+            {rows
+              .filter((r) => !r.fixed)
+              .map((row) => (
+                <div
+                  key={row.id}
+                  className="flex justify-between items-center p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">{row.description || row.category}</p>
+                    <p className="text-xs text-gray-500">{dayjs(row.date).format('YYYY-MM-DD')}</p>
+                  </div>
+                  <div className={cn('text-sm font-semibold', row.type === 'income' ? 'text-green-600' : 'text-red-600')}>
+                    {row.type === 'income' ? '+' : '-'}
+                    {currency === 'KRW' ? '₩' : currency}
+                    {row.amount.toLocaleString()}
+                  </div>
+                </div>
+              ))}
+            {rows.filter((r) => !r.fixed).length === 0 && (
+              <p className="text-sm text-gray-400 text-center py-8">{isKorean ? '변동 거래 내역이 없습니다' : 'No variable transactions'}</p>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* ag-Grid */}
-      <div className="ag-theme-alpine" style={{ height: 500, width: '100%' }}>
-        <AgGridReact<BaseRow>
-          ref={gridRef}
-          rowData={rows}
-          columnDefs={columnDefs}
-          defaultColDef={{
-            resizable: true,
-            sortable: true,
-            filter: true,
-          }}
-          theme="legacy"
-          onGridReady={onGridReady}
-          onCellEditingStopped={onCellEditingStopped}
-          rowSelection="multiple"
-          animateRows={true}
-          pagination={true}
-          paginationPageSize={20}
-          loading={isLoading}
-        />
-      </div>
+      {/* 전체 거래 내역 테이블 */}
+      <div className="bg-white rounded-lg shadow-sm p-5">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-base font-semibold text-gray-700">{isKorean ? '전체 거래 내역' : 'All Transactions'}</h3>
+          <div className="flex gap-2">
+            <span className="text-sm text-gray-500">
+              {isKorean ? '거래 내역' : 'Transactions'}: <span className="font-semibold">{rows.length}</span>
+            </span>
+            <Button variant="outline" size="sm" onClick={handleExportCSV}>
+              <Download className="h-4 w-4 mr-1" />
+              CSV
+            </Button>
+          </div>
+        </div>
 
-      {/* 하단 요약 */}
-      <div className="flex justify-end gap-6 text-sm font-medium">
-        <div className="text-green-600 dark:text-green-400">
-          {isKorean ? '총 수입' : 'Total Income'}: {currency === 'KRW' ? '₩' : currency}
-          {totalIncome.toLocaleString()}
+        {/* ag-Grid */}
+        <div className="ag-theme-alpine rounded-lg overflow-hidden border border-gray-200" style={{ height: 500, width: '100%' }}>
+          <AgGridReact<BaseRow>
+            ref={gridRef}
+            rowData={rows}
+            columnDefs={columnDefs}
+            defaultColDef={{
+              resizable: true,
+              sortable: true,
+              filter: true,
+            }}
+            theme="legacy"
+            onGridReady={onGridReady}
+            onCellEditingStopped={onCellEditingStopped}
+            rowSelection="multiple"
+            animateRows={true}
+            pagination={true}
+            paginationPageSize={20}
+            loading={isLoading}
+          />
         </div>
-        <div className="text-red-600 dark:text-red-400">
-          {isKorean ? '총 지출' : 'Total Expense'}: {currency === 'KRW' ? '₩' : currency}
-          {totalExpense.toLocaleString()}
-        </div>
-        <div className={balance >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-orange-600 dark:text-orange-400'}>
-          {isKorean ? '잔액' : 'Balance'}: {currency === 'KRW' ? '₩' : currency}
-          {balance.toLocaleString()}
+
+        {/* 하단 요약 */}
+        <div className="flex justify-end gap-6 text-sm font-medium mt-4 pt-4 border-t">
+          <div className="text-green-600">
+            {isKorean ? '총 수입' : 'Total Income'}: {currency === 'KRW' ? '₩' : currency}
+            {totalIncome.toLocaleString()}
+          </div>
+          <div className="text-red-600">
+            {isKorean ? '총 지출' : 'Total Expense'}: {currency === 'KRW' ? '₩' : currency}
+            {totalExpense.toLocaleString()}
+          </div>
+          <div className={balance >= 0 ? 'text-blue-600' : 'text-orange-600'}>
+            {isKorean ? '잔액' : 'Balance'}: {currency === 'KRW' ? '₩' : currency}
+            {balance.toLocaleString()}
+          </div>
         </div>
       </div>
     </div>

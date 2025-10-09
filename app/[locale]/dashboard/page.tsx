@@ -14,7 +14,6 @@ import { ProgressCardGrid } from '@/components/ProgressCard';
 import { PeriodChips } from '@/components/PeriodChips';
 import { TransactionGrid } from '@/components/TransactionGrid';
 import { DashboardSkeleton } from '@/components/LoadingSkeleton';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -87,25 +86,29 @@ export default function DashboardPage() {
     <>
       <OnboardingDialog open={showOnboarding} onComplete={handleOnboardingComplete} />
 
-      <div className="space-y-4 sm:space-y-6">
-        {/* 환영 메시지 */}
-        {session?.user && (
-          <Card>
-            <CardHeader className="p-4 sm:p-6">
-              <CardTitle className="text-lg sm:text-2xl">
-                {isKorean ? '환영합니다' : 'Welcome'}, {session.user.name}! 👋
-              </CardTitle>
-              <CardDescription className="text-sm sm:text-base">
-                {isKorean
-                  ? '월급일 기준 가계부로 수입과 지출을 관리하세요.'
-                  : 'Manage your income and expenses with salary-based budgeting.'}
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        )}
-
-        {/* Quick Add Bar */}
-        <QuickAddBar />
+      <div className="space-y-6">
+        {/* 헤더 섹션 */}
+        <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg shadow-md p-6 text-white">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+            {isKorean ? '가계부' : 'Personal Dashboard'}
+          </h1>
+          {session?.user && (
+            <p className="text-blue-50 text-sm sm:text-base">
+              {isKorean ? '환영합니다' : 'Welcome'}, {session.user.name}! 👋
+            </p>
+          )}
+          {payPeriod && (
+            <div className="mt-4 flex items-center gap-2 text-sm text-blue-50">
+              <span className="font-semibold">{isKorean ? '급여일 설정' : 'Salary Day'}:</span>
+              <span>{salaryDay}{isKorean ? '일' : 'th'}</span>
+              <span className="mx-2">|</span>
+              <span className="font-semibold">{isKorean ? '기간 적산 선택' : 'Period'}:</span>
+              <span>
+                {payPeriod.startISO?.split('T')[0]} ~ {payPeriod.endISO?.split('T')[0]}
+              </span>
+            </div>
+          )}
+        </div>
 
         {/* Progress Cards */}
         <ProgressCardGrid
@@ -117,25 +120,11 @@ export default function DashboardPage() {
           isLoading={summaryLoading}
         />
 
-        {/* Period Chips */}
-        <div className="w-full">
-          <PeriodChips salaryDay={salaryDay} maxMonths={24} />
-        </div>
+        {/* Quick Add Bar */}
+        <QuickAddBar />
 
-        {/* Period Info */}
-        {payPeriod && (
-          <Card className="bg-muted/50">
-            <CardHeader className="p-4 sm:p-6">
-              <CardTitle className="text-base sm:text-lg">
-                {isKorean ? '현재 급여월' : 'Current Pay Period'}
-              </CardTitle>
-              <CardDescription className="text-sm sm:text-base">
-                {payPeriod.label}: {payPeriod.startISO?.split('T')[0]} ~{' '}
-                {payPeriod.endISO?.split('T')[0]}
-              </CardDescription>
-            </CardHeader>
-          </Card>
-        )}
+        {/* Period Chips */}
+        <PeriodChips salaryDay={salaryDay} maxMonths={24} />
 
         {/* Transaction Grid */}
         <TransactionGrid
