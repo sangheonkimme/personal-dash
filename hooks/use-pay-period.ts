@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { PayPeriod, GetPayPeriodQuery } from '@/types';
+import type { PayPeriod, GetPayPeriodQuery, ApiSuccessResponse } from '@/types';
 
 /**
  * 급여월 조회 훅
@@ -21,8 +21,8 @@ export function usePayPeriod(params: GetPayPeriodQuery) {
         throw new Error(error.error?.message || 'Failed to fetch pay period');
       }
 
-      const data: PayPeriod = await response.json();
-      return data;
+      const result: ApiSuccessResponse<PayPeriod> = await response.json();
+      return result.data;
     },
     // 급여월은 거의 변경되지 않으므로 staleTime을 길게 설정
     staleTime: 60 * 60 * 1000, // 1시간

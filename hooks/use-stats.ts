@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { PeriodSummary, GetSummaryQuery } from '@/types';
+import type { PeriodSummary, GetSummaryQuery, ApiSuccessResponse } from '@/types';
 
 /**
  * 통계 요약 조회 훅
@@ -24,8 +24,8 @@ export function useSummary(params: GetSummaryQuery, options?: { enabled?: boolea
         throw new Error(error.error?.message || 'Failed to fetch summary');
       }
 
-      const data: PeriodSummary = await response.json();
-      return data;
+      const result: ApiSuccessResponse<PeriodSummary> = await response.json();
+      return result.data;
     },
     // 통계는 자주 변경되므로 staleTime을 짧게 설정
     staleTime: 1 * 60 * 1000, // 1분

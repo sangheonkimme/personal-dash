@@ -92,6 +92,14 @@ export function PeriodChips({ maxMonths = 24 }: PeriodChipsProps) {
         <span className="text-xs text-gray-500">
           {currentAnchor.format('YYYY년 MM월')}
         </span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={resetToToday}
+          className="ml-auto h-7 text-xs px-3"
+        >
+          {isKorean ? '오늘' : 'Today'}
+        </Button>
       </div>
 
       <div className="relative flex items-center gap-1 sm:gap-2">

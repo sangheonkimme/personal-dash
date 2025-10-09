@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import type { UpdateUserSettingsDTO } from '@/types';
+import type { UpdateUserSettingsDTO, ApiSuccessResponse } from '@/types';
 
 /**
  * User 타입 정의 (간소화된 버전)
@@ -28,8 +28,8 @@ export function useUserSettings() {
         throw new Error(error.error?.message || 'Failed to fetch user settings');
       }
 
-      const data: UserSettings = await response.json();
-      return data;
+      const result: ApiSuccessResponse<UserSettings> = await response.json();
+      return result.data;
     },
     // 사용자 설정은 거의 변경되지 않으므로 staleTime을 길게 설정
     staleTime: 30 * 60 * 1000, // 30분

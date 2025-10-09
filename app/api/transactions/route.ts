@@ -89,10 +89,16 @@ export async function GET(request: NextRequest) {
       take: pageSize,
     });
 
+    // Decimal을 number로 변환
+    const items = transactions.map((t) => ({
+      ...t,
+      amount: Number(t.amount),
+    }));
+
     // 페이지네이션 메타데이터
     const totalPages = Math.ceil(totalCount / pageSize);
     const response: PaginatedResponse<Transaction> = {
-      items: transactions,
+      items,
       meta: {
         page,
         pageSize,

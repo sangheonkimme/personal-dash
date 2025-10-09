@@ -5,6 +5,7 @@ import type {
   PaginatedResponse,
   CreateTransactionDTO,
   UpdateTransactionDTO,
+  ApiSuccessResponse,
 } from '@/types';
 
 /**
@@ -37,8 +38,8 @@ export function useTransactions(
         throw new Error(error.error?.message || 'Failed to fetch transactions');
       }
 
-      const data: PaginatedResponse<BaseRow> = await response.json();
-      return data;
+      const result: ApiSuccessResponse<PaginatedResponse<BaseRow>> = await response.json();
+      return result.data;
     },
     // 데이터가 자주 변경되므로 staleTime을 짧게 설정
     staleTime: 1 * 60 * 1000, // 1분
